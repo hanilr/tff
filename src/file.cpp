@@ -5,6 +5,9 @@
 #include <fstream>
 #include <filesystem>
 
+// DIY LIBRARY
+#include "lib/file.hpp"
+
 bool is_file(std::string file_name)
 {
     if(std::filesystem::exists(file_name) == true) { return true; }
