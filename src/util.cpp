@@ -42,7 +42,7 @@ std::string file_find(std::string file_name)
         try { ++rdi; }
         catch(std::filesystem::filesystem_error e)
         {
-            rdi.std::filesystem::recursive_directory_iterator::disable_recursion_pending();    // don't try to recurse into it
+            rdi.std::filesystem::recursive_directory_iterator::disable_recursion_pending();
             ++rdi;
         }
     }
