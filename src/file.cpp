@@ -30,6 +30,14 @@ void delete_file(const char* file_name)
     else { fprintf(stderr, "\nFILER ERROR: File doesn't exist! (DELETE)\n"); }
 }
 
+void create_dir(std::string dir_name, bool plurality)
+{
+    if(plurality == true) { std::filesystem::create_directories(dir_name); }
+    else { std::filesystem::create_directory(dir_name); }
+}
+
+void delete_dir(std::string dir_name) { std::filesystem::remove(dir_name); }
+
 void write_file(std::string file_name, std::string file_content, char perm_type)
 {
     if(is_file(file_name) == true)
