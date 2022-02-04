@@ -36,6 +36,21 @@
 #define cursor_invisible "\033[?25l"
 
 // MESSAGES
-#define warn_install "Do you accept to install? (y/n)"
+#define help_install "Install this app to your device. You can uninstall later."
+#define suggest_install "> You can change terminal size and add new colors, if you did."
+#define help_uninstall "Uninstall this app from your device."
+#define suggest_uninstall "> There is no empty directory after uninstalling."
+#define help_list "Display what's inside a directory."
+#define suggest_list "> You don't have to execute whole program for listing files."
+#define help_keymap "Guide of keymaps. If you don't know keymaps of this app."
+#define suggest_keymap "> You can have much more comfort while using this app."
+#define help_help "This section."
+
+#define keymap_search "File search section."
+#define guide_search "Type '/', enter file name then type 'return'."
+#define keymap_list "Get file list of current path."
+#define guide_list "Type 'l' then you'll get panel at right side."
+#define keymap_quit "To quit this app."
+#define guide_quit "Type 'q' then quit."
 
 #endif /* MADE BY @hanilr */
