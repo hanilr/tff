@@ -17,12 +17,26 @@ else
 	delete = rm
 endif
 
-.PHONY: run clean
+.PHONY: run clean install uninstall
 
 run: $(main) $(lib)
 	$(CC) $(c17) $(main) $(lib) -o $(output)
 
 clean: $(output)
 	$(delete) $(output)
+
+install: $(output)
+	ifeq ($(OS),Windows_NT)
+		tff.exe -install
+	else
+		./tff -install
+	endif
+
+uninstall: $(output)
+	ifeq ($(OS),Windows_NT)
+		tff.exe -uninstall
+	else
+		./tff -uninstall
+	endif
 
 # MADE BY @hanilr #
