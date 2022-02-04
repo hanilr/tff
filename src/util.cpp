@@ -6,6 +6,8 @@
 
 // DIY LIBRARY
 #include "lib/util.hpp"
+#include "lib/config.hpp"
+#include "lib/ui.hpp"
 
 int divide_half(int number)
 {
@@ -54,14 +56,17 @@ std::string file_find(std::string file_name)
     return file_path;
 }   
 
-void file_list(void)
+void file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor)
 {
+    int i = 0;
     for(const auto & get_file_name : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
         std::string file_name = get_file_name.path();
         std::string cpath = std::filesystem::current_path();
         int file_name_length = file_name.length() - cpath.length();
-        std::cout << file_name.substr(cpath.length(), file_name_length) << std::endl;
+        gotoxy(pos_x+1, pos_y+i+1);
+        std::cout << fgcolor << bgcolor << file_name.substr(cpath.length(), file_name_length) << esc_reset;
+        i+=1;
     }
 }
 
@@ -73,7 +78,11 @@ void key_map(char key)
         std::cin >> file_name;
         file_find(file_name);
     }
-    else if(key == 'l') { file_list(); }
+    else if(key == 'l')
+    {
+        clrscr();
+        file_list(0, 0, colorfg_white, colorbg_gray);
+    }
     else if(key == 'q') { exit(0); }
 }
 

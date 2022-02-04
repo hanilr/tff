@@ -8,7 +8,7 @@ char get_char_instantly(void);
 
 std::string file_find(std::string file_name);
 
-void file_list(void);
+void file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor);
 
 void key_map(char key);
 
