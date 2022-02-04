@@ -3,10 +3,15 @@
 // STANDARD LIBRARY
 #include <iostream>
 #include <filesystem>
-#include <string.h>
 
 // DIY LIBRARY
 #include "lib/util.hpp"
+
+int divide_half(int number)
+{
+    if(number%2 == 0) { return number/2; }
+    else { return (number-1)/2; }
+}
 
 char get_char_instantly(void)
 {
