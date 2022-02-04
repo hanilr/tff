@@ -2,6 +2,10 @@
 #ifndef _CONFIG_HPP
 #define _CONFIG_HPP
 
+// DEFAULT TERMINAL SIZE
+#define term_x 80
+#define term_y 24
+
 // ASCII ESCAPE SEQUENCE RESET CODE
 #define esc_reset "\033[0m"
 
@@ -9,12 +13,14 @@
 // FOREGROUND COLORS //
 #define colorfg_white "\033[38;2;233;233;233m"
 #define colorfg_black "\033[38;2;22;22;22m"
+#define colorfg_gray "\033[38;2;48;48;48m"
 #define colorfg_red "\033[38;2;200;55;55m"
 #define colorfg_green "\033[38;2;55;200;55m"
 #define colorfg_blue "\033[38;2;55;55;200m"
 // BACKGROUND COLORS //
 #define colorbg_white "\033[48;2;233;233;233m"
 #define colorbg_black "\033[48;2;22;22;22m"
+#define colorbg_gray "\033[48;2;48;48;48m"
 #define colorbg_red "\033[48;2;200;55;55m"
 #define colorbg_green "\033[48;2;55;200;55m"
 #define colorbg_blue "\033[48;2;55;55;200m"
@@ -28,5 +34,8 @@
 #define clear_screen "\033[2J\033[H"
 #define cursor_visible "\033[?25h"
 #define cursor_invisible "\033[?25l"
+
+// MESSAGES
+#define warn_install "Do you accept to install? (y/n)"
 
 #endif /* MADE BY @hanilr */
