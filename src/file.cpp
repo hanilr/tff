@@ -99,4 +99,6 @@ std::uintmax_t size_file(std::string file_name)
     }
 }
 
+void change_path(std::string new_path) {  std::filesystem::current_path(new_path); }
+
 /* MADE BY @hanilr */

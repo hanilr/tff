@@ -18,4 +18,6 @@ std::string read_file(std::string file_name, int line);
 
 std::uintmax_t size_file(std::string file_name);
 
+void change_path(std::string new_path);
+
 #endif /* MADE BY @hanilr */
