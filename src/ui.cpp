@@ -6,6 +6,7 @@
 // DIY LIBRARY
 #include "lib/ui.hpp"
 #include "lib/config.hpp"
+#include "lib/util.hpp"
 
 void clrscr(void) { std::cout << clear_screen; }
 
@@ -19,20 +20,47 @@ void gotoxy(int pos_x, int pos_y) { printf("\033[%d;%dH", pos_y, pos_x); }
 
 void nline(int times) { for(int i = 0; times > i; i+=1) { std::cout << std::endl; } }
 
-void draw_frame(int x_len, int y_len, std::string frame_color)
+void bg_color(int x_len, int y_len, int pos_x, int pos_y, std::string bgcolor)
 {
-    clrscr();
-    for(int i = 0; x_len > i; i+=1) { std::cout << frame_color << " " << esc_reset; }
-    nline(1);
-    for(int i = 1; y_len > i; i+=1)
+    for(int i = 0; y_len > i; i+=1)
     {
-        gotoxy(0, i);
+        gotoxy(pos_x+1, pos_y+i+1);
+        for(int i = 0; x_len > i; i+=1) { std::cout << bgcolor << " " << esc_reset; }
+    }
+}
+
+void draw_frame(int x_len, int y_len, int pos_x, int pos_y, std::string frame_color)
+{
+    gotoxy(pos_x+1, pos_y+1);
+    for(int i = 0; x_len > i; i+=1) { std::cout << frame_color << " " << esc_reset; }
+    for(int i = 1; y_len > i+1; i+=1)
+    {
+        gotoxy(pos_x+1, pos_y+i+1);
         std::cout << frame_color << " " << esc_reset;
-        gotoxy(x_len, i);
+        gotoxy(pos_x+x_len, pos_y+i+1);
         std::cout << frame_color << " " << esc_reset;
     }
-    nline(1);
+    gotoxy(pos_x+1, pos_y+y_len);
     for(int i = 0; x_len > i; i+=1) { std::cout << frame_color << " " << esc_reset; }
+}
+
+void user_warn(int x_len, int y_len, int pos_x, int pos_y, std::string fgcolor, std::string bgcolor, std::string frame_color, std::string warn_str)
+{
+    int pos_xlen = divide_half(x_len);
+    int pos_ylen = divide_half(y_len);
+
+    bg_color(pos_xlen, pos_ylen, divide_half(pos_xlen)+pos_x, divide_half(pos_ylen)+pos_y, bgcolor);
+    draw_frame(pos_xlen, pos_ylen, divide_half(pos_xlen)+pos_x, divide_half(pos_ylen)+pos_y, frame_color);
+    gotoxy(pos_xlen-divide_half(warn_str.length())+1, pos_ylen);
+    std::cout << fgcolor << bgcolor << text_bold << warn_str << esc_reset;
+}
+
+void user_screen(int x_len, int y_len, int pos_x, int pos_y, std::string bgcolor, std::string frame_color)
+{
+    clrscr();
+    bg_color(x_len, y_len, pos_x, pos_y,bgcolor);
+    draw_frame(x_len, y_len, pos_x, pos_y, frame_color);
+    gotoxy(x_len+pos_x+1, y_len+pos_y+1);
 }
 
 /* MADE BY @hanilr */
