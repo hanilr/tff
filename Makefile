@@ -6,14 +6,17 @@ c17 = -std=c++17
 main = src/main.cpp
 file = src/file.cpp
 util = src/util.cpp
+conf = src/conf.cpp
 ui = src/ui.cpp
-lib = $(file) $(util) $(ui)
+lib = $(file) $(util) $(conf) $(ui)
 
 ifeq ($(OS),Windows_NT)
 	output = tff.exe
+	exe = tff.exe
 	delete = del
 else
 	output = tff
+	exe = ./tff
 	delete = rm
 endif
 
@@ -26,17 +29,9 @@ clean: $(output)
 	$(delete) $(output)
 
 install: $(output)
-	ifeq ($(OS),Windows_NT)
-		tff.exe -install
-	else
-		./tff -install
-	endif
+	$(exe) -install
 
 uninstall: $(output)
-	ifeq ($(OS),Windows_NT)
-		tff.exe -uninstall
-	else
-		./tff -uninstall
-	endif
+	$(exe) -uninstall
 
 # MADE BY @hanilr #
