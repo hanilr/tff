@@ -2,6 +2,12 @@
 #ifndef _UTIL_HPP
 #define _UTIL_HPP
 
+int hex_letter(char letter, bool left_side);
+
+std::string rgb_to_esc(std::string rgb, bool is_fore);
+
+std::string hex_to_rgb(std::string chex, bool is_fore);
+
 int divide_half(int number);
 
 char get_char_instantly(void);

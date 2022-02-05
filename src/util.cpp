@@ -9,6 +9,62 @@
 #include "lib/config.hpp"
 #include "lib/ui.hpp"
 
+int hex_letter(char letter, bool left_side)
+{
+    if(left_side == false)
+    {
+        if(letter == 'a') { return 10; }
+        else if(letter == 'b') { return 11; }
+        else if(letter == 'c') { return 12; }
+        else if(letter == 'd') { return 13; }
+        else if(letter == 'e') { return 14; }
+        else if(letter == 'f') { return 15; }
+    }
+    else
+    {
+        if(letter == 'a') { return 160; }
+        else if(letter == 'b') { return 176; }
+        else if(letter == 'c') { return 192; }
+        else if(letter == 'd') { return 208; }
+        else if(letter == 'e') { return 224; }
+        else if(letter == 'f') { return 240; }
+    }
+    return 0;
+}
+
+std::string rgb_to_esc(std::string rgb, bool is_fore)
+{
+    std::string red, green, blue, result;
+    red = rgb[0] + rgb[1];
+    green = rgb[2] + rgb[3];
+    blue = rgb[4] + rgb[5];
+
+    if(is_fore == true) { result = "\033[38;2;" + red + ";" + green + ";" + blue + "m"; }
+    else { result = "\033[48;2;" + red + ";" + green + ";" + blue + "m"; }
+    return result;
+}
+
+std::string hex_to_rgb(std::string chex, bool is_fore)
+{
+    int red_a, red_b, green_a, green_b, blue_a, blue_b;
+
+    if(std::isdigit(chex[1]) == 0) { red_a = hex_letter(chex[1], true); }
+    else { red_a = chex[1]; }
+    if(std::isdigit(chex[2]) == 0) { red_b = hex_letter(chex[2], false); }
+    else { red_b = chex[2]; }
+    if(std::isdigit(chex[3]) == 0) { green_a = hex_letter(chex[3], true); }
+    else { green_a = chex[3]; }
+    if(std::isdigit(chex[4]) == 0) { green_b = hex_letter(chex[4], false); }
+    else { green_b = chex[4]; }
+    if(std::isdigit(chex[5]) == 0) { blue_a = hex_letter(chex[5], true); }
+    else { blue_a = chex[5]; }
+    if(std::isdigit(chex[6]) == 0) { blue_b = hex_letter(chex[6], false); }
+    else { blue_b = chex[6]; }
+    
+    int red = red_a + red_b, green = green_a + green_b, blue = blue_a + blue_b;
+    return rgb_to_esc(std::to_string(red) + std::to_string(green) + std::to_string(blue), is_fore);
+}
+
 int divide_half(int number)
 {
     if(number%2 == 0) { return number/2; }
