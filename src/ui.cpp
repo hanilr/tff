@@ -20,6 +20,12 @@ void gotoxy(int pos_x, int pos_y) { printf("\033[%d;%dH", pos_y, pos_x); }
 
 void nline(int times) { for(int i = 0; times > i; i+=1) { std::cout << std::endl; } }
 
+void goto_color_print(int pos_x, int pos_y, std::string arg1, std::string arg2, std::string arg3, std::string print_str)
+{
+    gotoxy(pos_x, pos_y);
+    std::cout << arg1 << arg2 << arg3 << print_str << esc_reset;
+}
+
 void bg_color(int x_len, int y_len, int pos_x, int pos_y, std::string bgcolor)
 {
     for(int i = 0; y_len > i; i+=1)

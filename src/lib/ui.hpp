@@ -10,6 +10,8 @@ void gotoxy(int pos_x, int pos_y);
 
 void nline(int times); // NEW LINE
 
+void goto_color_print(int pos_x, int pos_y, std::string arg1, std::string arg2, std::string arg3, std::string print_str);
+
 void bg_color(int x_len, int y_len, int pos_x, int pos_y, std::string bgcolor);
 
 void draw_frame(int x_len, int y_len, int pos_x, int pos_y, std::string frame_color);
