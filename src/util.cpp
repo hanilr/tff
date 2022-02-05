@@ -29,6 +29,22 @@ char get_char_instantly(void)
     return key;
 }
 
+std::string get_username(void)
+{
+    #ifdef _WIN32
+        #include <windows.h>
+        #include <Lmcons.h>
+
+        char username[UNLEN+1];
+        DWORD username_len = UNLEN+1;
+        GetUserName(username, &username_len);
+        return username;
+    #else
+        std::string username = getenv("USER");
+        return username;
+    #endif
+}
+
 std::string file_find(std::string file_name)
 {
     #ifdef _WIN32
