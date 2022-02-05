@@ -36,7 +36,11 @@ void create_dir(std::string dir_name, bool plurality)
     else { std::filesystem::create_directory(dir_name); }
 }
 
-void delete_dir(std::string dir_name) { std::filesystem::remove(dir_name); }
+void delete_dir(std::string dir_name, bool plurality)
+{
+    if(plurality == false) { std::filesystem::remove(dir_name); }
+    else { std::filesystem::remove_all(dir_name); }
+}
 
 void write_file(std::string file_name, std::string file_content, char perm_type)
 {
@@ -99,6 +103,8 @@ std::uintmax_t size_file(std::string file_name)
     }
 }
 
-void change_path(std::string new_path) {  std::filesystem::current_path(new_path); }
+std::string path_current(void) { return std::filesystem::current_path(); }
+
+void path_change(std::string new_path) {  std::filesystem::current_path(new_path); }
 
 /* MADE BY @hanilr */

@@ -10,7 +10,7 @@ void delete_file(const char* file_name);
 
 void create_dir(std::string dir_name, bool plurality);
 
-void delete_dir(std::string dir_name);
+void delete_dir(std::string dir_name, bool plurality);
 
 void write_file(std::string file_name, std::string file_content, char perm_type);
 
@@ -18,6 +18,8 @@ std::string read_file(std::string file_name, int line);
 
 std::uintmax_t size_file(std::string file_name);
 
-void change_path(std::string new_path);
+std::string path_current(void);
+
+void path_change(std::string new_path);
 
 #endif /* MADE BY @hanilr */
