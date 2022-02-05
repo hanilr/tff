@@ -7,6 +7,9 @@
 
 // DIY LIBRARY
 #include "lib/file.hpp"
+#include "lib/config.hpp"
+#include "lib/util.hpp"
+#include "lib/ui.hpp"
 
 bool is_file(std::string file_name)
 {
@@ -106,5 +109,40 @@ std::uintmax_t size_file(std::string file_name)
 std::string path_current(void) { return std::filesystem::current_path(); }
 
 void path_change(std::string new_path) {  std::filesystem::current_path(new_path); }
+
+void set_path_to_main(void)
+{
+    #ifdef _WIN32
+        for(int x = 0, y = 10; y > x; x+=1)
+        {
+            path_change("../");
+            if(path_current().compare("C:\\") == 0)
+            {
+                path_change("Program Files\\tff\\");
+                break;
+            }
+            if(x == 9)
+            {
+                clrscr();
+                user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
+            }
+        }
+    #else
+        for(int x = 0, y = 10; y > x; x+=1)
+        {
+            path_change("../");
+            if(path_current().compare("/") == 0)
+            {
+                path_change("home/" + get_username() + "/.tff/");
+                break;
+            }
+            if(x == 9)
+            {
+                clrscr();
+                user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
+            }
+        }
+        #endif
+}
 
 /* MADE BY @hanilr */

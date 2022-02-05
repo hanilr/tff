@@ -22,4 +22,6 @@ std::string path_current(void);
 
 void path_change(std::string new_path);
 
+void set_path_to_main(void);
+
 #endif /* MADE BY @hanilr */
