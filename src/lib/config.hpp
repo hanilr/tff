@@ -2,6 +2,8 @@
 #ifndef _CONFIG_HPP
 #define _CONFIG_HPP
 
+struct ui_color { std::string fgc, bgc, fc; };
+
 // DEFAULT TERMINAL SIZE
 #define term_x 80
 #define term_y 24
