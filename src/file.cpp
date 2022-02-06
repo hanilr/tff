@@ -17,6 +17,12 @@ bool is_file(std::string file_name)
     else { return false; }
 }
 
+bool is_dir(std::string dir_path)
+{
+    if(std::filesystem::is_directory(std::filesystem::status(dir_path))) { return true; }
+    else { return false; }
+}
+
 void create_file(std::string file_name)
 {
     if(is_file(file_name) == false)
@@ -96,6 +102,18 @@ std::string read_file(std::string file_name, int line)
     }
 }
 
+int count_line(std::string file_name)
+{
+    std::string file_content = read_file(file_name, 0);
+    int i = 0, count = 1;
+    for(i; file_content.length() > i; i+=1)
+    {
+        if(file_content[i] == '\n') { count+=1; }
+        if(file_content[i] == '\0') { break; }
+    }
+    return count;
+}
+
 std::uintmax_t size_file(std::string file_name)
 {
     if(is_file(file_name) == true) { return std::filesystem::file_size(file_name); }
@@ -113,36 +131,24 @@ void path_change(std::string new_path) {  std::filesystem::current_path(new_path
 void set_path_to_main(void)
 {
     #ifdef _WIN32
-        for(int x = 0, y = 10; y > x; x+=1)
-        {
-            path_change("../");
-            if(path_current().compare("C:\\") == 0)
-            {
-                path_change("Program Files\\tff\\");
-                break;
-            }
-            if(x == 9)
-            {
-                clrscr();
-                user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
-            }
-        }
+        std::string dir_root = "C:\\", dir_main = "Program Files\\tff\\";
     #else
-        for(int x = 0, y = 10; y > x; x+=1)
+        std::string dir_root = ".", dir_main = "home/" + get_username() + "/.tff/";
+    #endif
+    for(int x = 0, y = 10; y > x; x+=1)
+    {
+        path_change("../");
+        if(path_current().compare(dir_root) == 0)
         {
-            path_change("../");
-            if(path_current().compare("/") == 0)
-            {
-                path_change("home/" + get_username() + "/.tff/");
-                break;
-            }
-            if(x == 9)
-            {
-                clrscr();
-                user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
-            }
+            path_change(dir_main);
+            break;
         }
-        #endif
+        if(x == 9)
+        {
+            clrscr();
+            user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
+        }
+    }
 }
 
 /* MADE BY @hanilr */

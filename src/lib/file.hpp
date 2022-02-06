@@ -4,6 +4,8 @@
 
 bool is_file(std::string file_name);
 
+bool is_dir(std::string dir_path);
+
 void create_file(std::string file_name);
 
 void delete_file(const char* file_name);
@@ -15,6 +17,8 @@ void delete_dir(std::string dir_name, bool plurality);
 void write_file(std::string file_name, std::string file_content, char perm_type);
 
 std::string read_file(std::string file_name, int line);
+
+int count_line(std::string file_name);
 
 std::uintmax_t size_file(std::string file_name);
 
