@@ -15,8 +15,11 @@
 
 int main(int argc, char* argv[])
 {
+    int term_width = term_x, term_height = term_y;
+    struct color_variable cv[256];
+    cv[0].color_count = 0;
+
     cursor_visibility(false);
-    int term_width, term_height;
     if(argc == 2 && strcmp(argv[1], "-install") == 0)
     {
         clrscr();
@@ -68,6 +71,8 @@ int main(int argc, char* argv[])
                     create_dir(data_dir, false);
                     create_file(conf_dir + "terminal.txt");
                     write_file(conf_dir + "terminal.txt", term_config, 'w');
+                    create_file(data_dir + "color.txt");
+                    write_file(data_dir + "color.txt", "", 'w');
                     system(compile_com.c_str());
                     break;
                 }
@@ -81,11 +86,14 @@ int main(int argc, char* argv[])
             user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Successfully installed!");
             // ---------------
         }
-        else { std::cout << colorfg_white << colorbg_gray << text_bold << "n" << esc_reset; }
+        else
+        {
+            clrscr();
+            user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "Installation cancelled!");
+        }
     }
     else if(argc == 2 && strcmp(argv[1], "-uninstall") == 0)
     {
-        set_path_to_main();
         if(is_installed() == true)
         {
             clrscr();
@@ -98,12 +106,11 @@ int main(int argc, char* argv[])
             if(uninstall_decision == 'y')
             {
                 #ifdef _WIN32
-                    path_change("../");
-                    delete_dir("tff\\", true);
+                    std::string dir_name = "tff\\";
                 #else
-                    path_change("../");
-                    delete_dir(".tff/", true);
+                    std::string dir_name = ".tff/";
                 #endif
+                delete_dir(dir_name, true);
                 clrscr();
                 user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Successfully uninstalled!");
             }
@@ -158,17 +165,16 @@ int main(int argc, char* argv[])
         goto_color_print(3, 12, colorfg_white, colorbg_gray, "", help_list);
         goto_color_print(3, 13, colorfg_white, colorbg_gray, "", suggest_list);
 
-        goto_color_print(3, 15, colorfg_white, colorbg_gray, text_bold, "[ -keymap ]");
-        goto_color_print(3, 16, colorfg_white, colorbg_gray, "", help_keymap);
-        goto_color_print(3, 17, colorfg_white, colorbg_gray, "", suggest_keymap);
+        goto_color_print(3, 18, colorfg_white, colorbg_gray, text_bold, "[ -keymap ]");
+        goto_color_print(3, 19, colorfg_white, colorbg_gray, "", help_keymap);
+        goto_color_print(3, 20, colorfg_white, colorbg_gray, "", suggest_keymap);
 
         goto_color_print(3, 22, colorfg_white, colorbg_gray, text_bold, "[ -help ]");
         goto_color_print(13, 22, colorfg_white, colorbg_gray, "", help_help);
     }
     else if(argc == 1) // USER INTERFACE
     {
-        set_path_to_main();
-        bool perm_type;
+        bool perm_type = false;
         if(is_installed() == true)
         {
             #ifdef _WIN32
@@ -180,29 +186,40 @@ int main(int argc, char* argv[])
             term_height = std::stoi(read_file("terminal.txt", 2));
             perm_type = true;
         }
-        else
+        if(perm_type == true) // CUSTOM COLOR DEFINES
         {
-            term_width = term_x;
-            term_height = term_y;
-            perm_type = false;
+            #ifdef _WIN32
+                std::string conf_path = "conf\\";
+                std::string data_dir = "data\\";
+            #else
+                std::string conf_path = "conf/";
+                std::string data_dir = "data/";
+            #endif
+            set_path_to_main();
+            int line = count_line(data_dir + "color.txt");
+
+            for(int i = 1; line+1 > i; i+=1)
+            {
+                cv[i].color_name = read_file(data_dir + "color.txt", i);
+                cv[i].color_value = read_file(conf_path + cv[i].color_name + ".txt", 1);
+                cv[0].color_count += 1;
+            }
         }
-        
-        if(perm_type == true)
+        while(1)
         {
-            // COLOR MANAGEMENT
+            clrscr();
+            user_screen(term_width, term_height, 0, 0, colorbg_gray, colorbg_white);
+            // MAIN SECTION
         }
-        clrscr();
-        user_screen(term_width, term_height, 0, 0, colorbg_gray, colorbg_white);
     }
-    //else if(argc > 1) // MISSING ARGUMENT ERROR
+    else if(argc > 1) // MISSING ARGUMENT ERROR
     //{
         //clrscr();
         //user_warn(term_x, term_y, 0, 0, colorfg_white, colorbg_black, colorbg_red, "[ERROR] Missing argument!");
     //}
     
-    if(argc == 1) { gotoxy(term_width, term_height); }
-    else { gotoxy(term_x, term_y); }
     cursor_visibility(true);
+    gotoxy(term_width, term_height);
     return 0;
 }
 
