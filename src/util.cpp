@@ -128,7 +128,7 @@ std::string file_find(std::string file_name)
     return file_path;
 }   
 
-void file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor)
+void file_list(int pos_x, int pos_y, int theight, std::string fgcolor, std::string bgcolor)
 {
     int i = 0;
     for(const auto & get_file_name : std::filesystem::directory_iterator(std::filesystem::current_path()))
@@ -136,24 +136,25 @@ void file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor)
         std::string file_name = get_file_name.path();
         std::string cpath = std::filesystem::current_path();
         int file_name_length = file_name.length() - cpath.length();
-        gotoxy(pos_x+1, pos_y+i+1);
-        std::cout << fgcolor << bgcolor << file_name.substr(cpath.length(), file_name_length) << esc_reset;
+        goto_color_print(pos_x+3, pos_y+i+5, fgcolor, bgcolor, "", file_name.substr(cpath.length(), file_name_length));
         i+=1;
+        if(i == theight-7)
+        {
+            goto_color_print(pos_x+3, pos_y+i+3, fgcolor, bgcolor, "", "/..");
+            break;
+        }
     }
 }
 
-void key_map(char key)
+void key_map(char key, std::string main_fg, std::string main_bg)
 {
     if(key == '/')
     {
         std::string file_name;
+        std::cout << main_fg << main_bg;
         std::cin >> file_name;
-        file_find(file_name);
-    }
-    else if(key == 'l')
-    {
-        clrscr();
-        file_list(0, 0, colorfg_white, colorbg_gray);
+        std::cout << esc_reset;
+        std::cout << file_find(file_name);
     }
     else if(key == 'q') { exit(0); }
 }
