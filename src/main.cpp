@@ -70,9 +70,11 @@ int main(int argc, char* argv[])
                     create_dir(conf_dir, true);
                     create_dir(data_dir, false);
                     create_file(conf_dir + "terminal.txt");
-                    write_file(conf_dir + "terminal.txt", term_config, 'w');
                     create_file(data_dir + "color.txt");
+                    create_file(conf_dir + "ui_color.txt");
+                    write_file(conf_dir + "terminal.txt", term_config, 'w');
                     write_file(data_dir + "color.txt", "", 'w');
+                    write_file(conf_dir + "ui_color.txt", "", 'w');
                     system(compile_com.c_str());
                     break;
                 }
@@ -131,7 +133,7 @@ int main(int argc, char* argv[])
         clrscr();
         bg_color(divide_half(term_x), term_y-1, divide_half(divide_half(term_x)), 0, colorbg_gray);
         draw_frame(divide_half(term_x), term_y-1, divide_half(divide_half(term_x)), 0, colorbg_white);
-        file_list(divide_half(divide_half(term_x))+2, 2, colorbg_gray, colorfg_white);
+        file_list(divide_half(divide_half(term_x))+2, 2, term_y, colorbg_gray, colorfg_white);
     }
     else if(argc == 2 && strcmp(argv[1], "-keymap") == 0)
     {
@@ -140,10 +142,6 @@ int main(int argc, char* argv[])
         goto_color_print(3, 3, colorfg_white, colorbg_gray, text_bold, "[ '/' ]");
         goto_color_print(11, 3, colorfg_white, colorbg_gray, "", keymap_search);
         goto_color_print(3, 4, colorfg_white, colorbg_gray, "", guide_search);
-
-        goto_color_print(3, 6, colorfg_white, colorbg_gray, text_bold, "[ 'l' ]");
-        goto_color_print(11, 6, colorfg_white, colorbg_gray, "", keymap_list);
-        goto_color_print(3, 7, colorfg_white, colorbg_gray, "", guide_list);
 
         goto_color_print(3, 21, colorfg_white, colorbg_gray, text_bold, "[ 'q' ]");
         goto_color_print(11, 21, colorfg_white, colorbg_gray, "", keymap_quit);
@@ -174,7 +172,10 @@ int main(int argc, char* argv[])
     }
     else if(argc == 1) // USER INTERFACE
     {
+        std::string mfgc, mbgc, mfc, wfgc, wbgc, wfc, lfgc, lbgc, lfc, sfgc, sbgc, sfc, efgc, ebgc, efc;
         bool perm_type = false;
+        struct ui_color uc[14];
+
         if(is_installed() == true)
         {
             #ifdef _WIN32
@@ -205,11 +206,44 @@ int main(int argc, char* argv[])
                 cv[0].color_count += 1;
             }
         }
+        else
+        { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
+            
+            uc[0].fgc = colorfg_white, uc[0].bgc = colorbg_black, uc[0].fc = colorbg_gray; // MAIN SCREEN
+            uc[1].fgc = colorfg_black, uc[1].bgc = colorbg_gray, uc[1].fc = colorbg_red; // WARNING SCREEN
+            uc[2].fgc = colorfg_white, uc[2].bgc = colorbg_black; // LIST SCREEN
+            uc[3].fgc = colorfg_green, uc[3].bgc = colorbg_gray, uc[3].fc = colorbg_green; // SUCCESS SCREEN
+            uc[4].fgc = colorfg_red, uc[4].bgc = colorbg_gray, uc[4].fc = colorbg_red; // ERROR SCREEN
+        }
+
+        user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
         while(1)
         {
-            clrscr();
-            user_screen(term_width, term_height, 0, 0, colorbg_gray, colorbg_white);
-            // MAIN SECTION
+            goto_color_print(3, 3, uc[0].fgc, uc[0].bgc, text_bold, "[CURRENT PATH] ");
+            goto_color_print(18, 3, uc[0].fgc, uc[0].bgc, "", path_current());
+            file_list(0, 0, term_height, uc[2].fgc, uc[2].bgc);
+            goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
+
+            goto_color_print(term_width-get_username().length()-14, 3, uc[0].fgc, uc[0].bgc, text_bold, "[USERNAME] ");
+            goto_color_print(term_width-get_username().length()-3, 3, uc[0].fgc, uc[0].bgc, "", get_username());
+
+            goto_color_print(term_width-get_username().length()-14, 5, uc[0].fgc, uc[0].bgc, text_bold, "[WIDTH] ");
+            goto_color_print(term_width-get_username().length()-6, 5, uc[0].fgc, uc[0].bgc, "", std::to_string(term_width));
+
+            goto_color_print(term_width-get_username().length()-14, 6, uc[0].fgc, uc[0].bgc, text_bold, "[HEIGHT] ");
+            goto_color_print(term_width-get_username().length()-5, 6, uc[0].fgc, uc[0].bgc, "", std::to_string(term_height));
+
+            gotoxy(5, term_height-1);
+            std::cout << uc[0].fgc << uc[0].bgc;
+            char key = get_char_instantly();
+            std::cout << esc_reset;
+            if(key == 'q') { gotoxy(term_width, term_height); }
+            key_map(key, uc[0].fgc, uc[0].bgc);
+            if(key == '/')
+            {
+                gotoxy(3, term_height-1);
+                for(int i = 3; term_width > i; i+=1) { std::cout << uc[0].fgc << uc[0].bgc << " " << esc_reset; }
+            }
         }
     }
     else if(argc > 1) // MISSING ARGUMENT ERROR
