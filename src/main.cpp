@@ -55,10 +55,10 @@ int main(int argc, char* argv[])
             std::string term_config = term_size_x + "\n" + term_size_y;
             #ifdef _WIN32
                 std::string compile_com = "g++ " + main_dir + "/src/main.cpp " + main_dir + "/src/file.cpp " + main_dir + "/src/util.cpp " + main_dir + "/src/ui.cpp " + main_dir + "/src/conf.cpp " + "-o ~/.tff/tff.exe";
-                std::string dir_root = "C:\\", dir_main = "Program Files\\", conf_dir = "tff\\conf\\", data_dir = "tff\\data\\";
+                std::string dir_root = "C:\\", dir_main = "Program Files\\", conf_dir = "tff\\conf\\", data_dir = "tff\\data\\", history_dir = "tff\\data\\history\\";
             #else
                 std::string compile_com = "g++ " + main_dir + "/src/main.cpp " + main_dir + "/src/file.cpp " + main_dir + "/src/util.cpp " + main_dir + "/src/ui.cpp " + main_dir + "/src/conf.cpp " + "-o ~/.tff/tff";
-                std::string dir_root = "/", dir_main = "home/" + get_username() + "/", conf_dir = ".tff/conf/", data_dir = ".tff/data/";
+                std::string dir_root = "/", dir_main = "home/" + get_username() + "/", conf_dir = ".tff/conf/", data_dir = ".tff/data/", history_dir = ".tff/data/history/";
             #endif
 
             for(int x = 0, y = 10; y > x; x+=1)
@@ -69,11 +69,14 @@ int main(int argc, char* argv[])
                     path_change(dir_main);
                     create_dir(conf_dir, true);
                     create_dir(data_dir, false);
+                    create_dir(history_dir, false);
+
                     create_file(conf_dir + "terminal.txt");
-                    create_file(data_dir + "color.txt");
+                    create_file(data_dir + "search_history.txt");
                     create_file(conf_dir + "ui_color.txt");
+
                     write_file(conf_dir + "terminal.txt", term_config, 'w');
-                    write_file(data_dir + "color.txt", "", 'w');
+                    write_file(data_dir + "search_history.txt", "", 'w');
                     write_file(conf_dir + "ui_color.txt", ui_conf_color, 'w');
                     system(compile_com.c_str());
                     break;
@@ -172,17 +175,16 @@ int main(int argc, char* argv[])
     else if(argc == 1) // USER INTERFACE
     {
         bool perm_type = false;
-        struct ui_color uc[14];
+        struct ui_color uc[5];
         int reverse_count;
 
         if(is_installed() == true)
         {
-            set_path_to_main();
             #ifdef _WIN32
-                path_change("Program Files\\tff\\conf\\");
+                path_change("tff\\conf\\");
                 reverse_count = 3;
             #else
-                path_change("home/" + get_username() + "/.tff/conf/");
+                path_change(".tff/conf/");
                 reverse_count = 4;
             #endif
             term_width = std::stoi(read_file("terminal.txt", 1));
@@ -197,7 +199,6 @@ int main(int argc, char* argv[])
             uc[2].fgc = hex_to_rgb(read_file("ui_color.txt", 28), true), uc[2].bgc = hex_to_rgb(read_file("ui_color.txt", 31), false); // LIST SCREEN
             uc[3].fgc = hex_to_rgb(read_file("ui_color.txt", 35), true), uc[3].bgc = hex_to_rgb(read_file("ui_color.txt", 38), false), uc[3].fc = hex_to_rgb(read_file("ui_color.txt", 41), false); // SUCCESS SCREEN
             uc[4].fgc = hex_to_rgb(read_file("ui_color.txt", 45), true), uc[4].bgc = hex_to_rgb(read_file("ui_color.txt", 48), false), uc[4].fc = hex_to_rgb(read_file("ui_color.txt", 51), false); // ERROR SCREEN
-            std::cout << hex_to_rgb("#e9e9e9", true) << "test" << esc_reset;
         }
         else
         { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
@@ -210,9 +211,9 @@ int main(int argc, char* argv[])
         }
 
         for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
-        user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
         while(1)
         {
+            user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
             goto_color_print(3, 3, uc[0].fgc, uc[0].bgc, text_bold, "[CURRENT PATH] ");
             goto_color_print(18, 3, uc[0].fgc, uc[0].bgc, "", path_current());
             file_list(0, 0, term_height, uc[2].fgc, uc[2].bgc);
@@ -228,16 +229,95 @@ int main(int argc, char* argv[])
             goto_color_print(term_width-get_username().length()-5, 6, uc[0].fgc, uc[0].bgc, "", std::to_string(term_height));
 
             gotoxy(5, term_height-1);
+            // KEY MAP SECTION
             std::cout << uc[0].fgc << uc[0].bgc;
             char key = get_char_instantly();
             std::cout << esc_reset;
-            if(key == 'q') { gotoxy(term_width, term_height); }
-            key_map(key, uc[0].fgc, uc[0].bgc);
+            // KEY MAPS
             if(key == '/')
             {
-                gotoxy(3, term_height-1);
-                for(int i = 3; term_width > i; i+=1) { std::cout << uc[0].fgc << uc[0].bgc << " " << esc_reset; }
+                std::string file_name;
+                std::cout << uc[0].fgc << uc[0].bgc;
+                std::cin >> file_name;
+                std::cout << esc_reset;
+
+                std::string file_buffer = file_find(file_name);
+                if(is_installed() == true) // IF APPLICATION INSTALLED THEN SAVE TO HISTORY
+                {
+                    #ifdef _WIN32
+                        path_change("tff\\data\\");
+                    #else
+                        path_change(".tff/data/");
+                    #endif
+                    write_file("search_history.txt", "\n" + file_name, 'a');
+                    #ifdef _WIN32
+                        path_change("history\\");
+                    #else
+                        path_change("history/");
+                    #endif
+                    if(is_file(file_name) == true) { write_file(file_name, file_buffer, 'w'); }
+                    else
+                    {
+                        create_file(file_name);
+                        write_file(file_name, file_buffer, 'w');
+                    }
+                }
+                else // CREATE A TEMPORARY FILE IN TEMP
+                {
+                    for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
+                    #ifdef _WIN32
+                        path_change("Users\\" + get_username() + "\\AppData\\Local\\Temp\\");
+                    #else
+                        path_change("tmp/");
+                    #endif
+                    create_file(file_name);
+                    write_file(file_name, file_buffer, 'w');
+                }
+                
+                int buffer_line = count_line(file_name), move_count, file_line_position = 0;
+                if(buffer_line > term_y - 4) { move_count = buffer_line - (term_y - 5); }
+
+                while(1)
+                {
+                    user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
+                    goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
+
+                    for(int i = 0; buffer_line > i; i+=1)
+                    {
+                        goto_color_print(1, i+3, uc[0].fgc, uc[0].bgc, "", read_file(file_name, file_line_position+i));
+                        if(i == term_y - 4) { break; }
+                    }
+                    draw_frame(term_width, term_height, 0, 0, uc[0].fc);
+
+                    gotoxy(5, term_height-1);
+                    std::cout << uc[0].fgc << uc[0].bgc;
+                    char key_list = get_char_instantly();
+                    std::cout << esc_reset;
+
+                    if(key_list == 'k' && move_count != '\0' && file_line_position != 0) { file_line_position-=1; } // MOVE CURSOR TO UP
+                    else if(key_list == 'j' && move_count != '\0' && file_line_position != move_count) { file_line_position+=1; } // MOVE CURSOR TO DOWN
+                    else if(key_list == 'q') { break; }
+                }
+                if(is_installed() == false) // DELETE TEMPORARY FILE IF NOT INSTALLED
+                {
+                    for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
+                    #ifdef _WIN32
+                        path_change("Users\\" + get_username() + "\\AppData\\Local\\Temp\\");
+                    #else
+                        path_change("tmp/");
+                    #endif
+                    delete_file(file_name.c_str());
+                }
+
+                for(int i = 0; reverse_count+1 > i; i+=1) { path_change("../"); }
             }
+            else if(key == 'q')
+            {
+                gotoxy(term_width, term_height);
+                return 0;
+            }
+            gotoxy(3, term_height-1);
+            for(int i = 3; term_width > i; i+=1) { std::cout << uc[0].fgc << uc[0].bgc << " " << esc_reset; }
         }
     }
     else if(argc > 1) // MISSING ARGUMENT ERROR
