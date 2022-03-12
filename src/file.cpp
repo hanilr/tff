@@ -61,8 +61,11 @@ void write_file(std::string file_name, std::string file_content, char perm_type)
         {
             std::string file_content_temp;
             wf >> file_content_temp;
-            file_content_temp = file_content_temp + file_content;
-            wf << file_content_temp;
+            file_content_temp += file_content;
+
+            std::fstream af(file_name);
+            af << file_content_temp;
+            af.close();
         }
         else { fprintf(stderr, "\nFILE ERROR: Permission type fault! (WRITE)\n"); }
         wf.close();
@@ -143,7 +146,7 @@ void set_path_to_main(void)
             path_change(dir_main);
             break;
         }
-        if(x == 9)
+        else if(x == 9)
         {
             clrscr();
             user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
