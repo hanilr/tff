@@ -9,6 +9,35 @@
 #include "lib/config.hpp"
 #include "lib/ui.hpp"
 
+int hex_number(int number, bool left_side)
+{
+    if(left_side == false)
+    {
+        if(number == '1') { return 1; }
+        else if(number == '2') { return 2; }
+        else if(number == '3') { return 3; }
+        else if(number == '4') { return 4; }
+        else if(number == '5') { return 5; }
+        else if(number == '6') { return 6; }
+        else if(number == '7') { return 7; }
+        else if(number == '8') { return 8; }
+        else if(number == '9') { return 9; }
+    }
+    else
+    {
+        if(number == '1') { return 16; }
+        else if(number == '2') { return 32; }
+        else if(number == '3') { return 48; }
+        else if(number == '4') { return 64; }
+        else if(number == '5') { return 80; }
+        else if(number == '6') { return 96; }
+        else if(number == '7') { return 112; }
+        else if(number == '8') { return 128; }
+        else if(number == '9') { return 144; }
+    }
+    return 0;
+}
+
 int hex_letter(char letter, bool left_side)
 {
     if(left_side == false)
@@ -32,13 +61,9 @@ int hex_letter(char letter, bool left_side)
     return 0;
 }
 
-std::string rgb_to_esc(std::string rgb, bool is_fore)
+std::string rgb_to_esc(std::string red, std::string green, std::string blue, bool is_fore)
 {
-    std::string red, green, blue, result;
-    red = rgb[0] + rgb[1];
-    green = rgb[2] + rgb[3];
-    blue = rgb[4] + rgb[5];
-
+    std::string result;
     if(is_fore == true) { result = "\033[38;2;" + red + ";" + green + ";" + blue + "m"; }
     else { result = "\033[48;2;" + red + ";" + green + ";" + blue + "m"; }
     return result;
@@ -49,20 +74,20 @@ std::string hex_to_rgb(std::string chex, bool is_fore)
     int red_a, red_b, green_a, green_b, blue_a, blue_b;
 
     if(std::isdigit(chex[1]) == 0) { red_a = hex_letter(chex[1], true); }
-    else { red_a = chex[1]; }
+    else { red_a = hex_number(chex[1], true); }
     if(std::isdigit(chex[2]) == 0) { red_b = hex_letter(chex[2], false); }
-    else { red_b = chex[2]; }
+    else { red_b = hex_number(chex[2], false); }
     if(std::isdigit(chex[3]) == 0) { green_a = hex_letter(chex[3], true); }
-    else { green_a = chex[3]; }
+    else { green_a = hex_number(chex[3], true); }
     if(std::isdigit(chex[4]) == 0) { green_b = hex_letter(chex[4], false); }
-    else { green_b = chex[4]; }
+    else { green_b = hex_number(chex[4], false); }
     if(std::isdigit(chex[5]) == 0) { blue_a = hex_letter(chex[5], true); }
-    else { blue_a = chex[5]; }
+    else { blue_a = hex_number(chex[5], true); }
     if(std::isdigit(chex[6]) == 0) { blue_b = hex_letter(chex[6], false); }
-    else { blue_b = chex[6]; }
+    else { blue_b = hex_number(chex[6], false); }
     
     int red = red_a + red_b, green = green_a + green_b, blue = blue_a + blue_b;
-    return rgb_to_esc(std::to_string(red) + std::to_string(green) + std::to_string(blue), is_fore);
+    return rgb_to_esc(std::to_string(red), std::to_string(green), std::to_string(blue), is_fore);
 }
 
 int divide_half(int number)
