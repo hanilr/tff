@@ -141,7 +141,7 @@ std::string file_find(std::string file_name)
     while(rdi != end)
     {
         const std::string path = rdi->path().string();
-        if(path.find(file_name) != std::string::npos) { file_path += path + "\n "; }
+        if(path.find(file_name) != std::string::npos) { file_path += path + "\n  "; }
 
         try { ++rdi; }
         catch(std::filesystem::filesystem_error e)
@@ -169,19 +169,6 @@ void file_list(int pos_x, int pos_y, int theight, std::string fgcolor, std::stri
             break;
         }
     }
-}
-
-void key_map(char key, std::string main_fg, std::string main_bg)
-{
-    if(key == '/')
-    {
-        std::string file_name;
-        std::cout << main_fg << main_bg;
-        std::cin >> file_name;
-        std::cout << esc_reset;
-        std::cout << file_find(file_name);
-    }
-    else if(key == 'q') { exit(0); }
 }
 
 /* MADE BY @hanilr */
