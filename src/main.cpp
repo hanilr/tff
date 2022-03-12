@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
                     create_file(conf_dir + "ui_color.txt");
                     write_file(conf_dir + "terminal.txt", term_config, 'w');
                     write_file(data_dir + "color.txt", "", 'w');
-                    write_file(conf_dir + "ui_color.txt", "", 'w');
+                    write_file(conf_dir + "ui_color.txt", ui_conf_color, 'w');
                     system(compile_com.c_str());
                     break;
                 }
@@ -143,9 +143,8 @@ int main(int argc, char* argv[])
         goto_color_print(11, 3, colorfg_white, colorbg_gray, "", keymap_search);
         goto_color_print(3, 4, colorfg_white, colorbg_gray, "", guide_search);
 
-        goto_color_print(3, 21, colorfg_white, colorbg_gray, text_bold, "[ 'q' ]");
-        goto_color_print(11, 21, colorfg_white, colorbg_gray, "", keymap_quit);
-        goto_color_print(3, 22, colorfg_white, colorbg_gray, "", guide_quit);
+        goto_color_print(3, 22, colorfg_white, colorbg_gray, text_bold, "[ 'q' ]");
+        goto_color_print(11, 22, colorfg_white, colorbg_gray, "", keymap_quit);
     }
     else if(argc == 2 && strcmp(argv[1], "-help") == 0)
     {
@@ -172,39 +171,33 @@ int main(int argc, char* argv[])
     }
     else if(argc == 1) // USER INTERFACE
     {
-        std::string mfgc, mbgc, mfc, wfgc, wbgc, wfc, lfgc, lbgc, lfc, sfgc, sbgc, sfc, efgc, ebgc, efc;
         bool perm_type = false;
         struct ui_color uc[14];
+        int reverse_count;
 
         if(is_installed() == true)
         {
+            set_path_to_main();
             #ifdef _WIN32
                 path_change("Program Files\\tff\\conf\\");
+                reverse_count = 3;
             #else
                 path_change("home/" + get_username() + "/.tff/conf/");
+                reverse_count = 4;
             #endif
             term_width = std::stoi(read_file("terminal.txt", 1));
             term_height = std::stoi(read_file("terminal.txt", 2));
             perm_type = true;
         }
-        if(perm_type == true) // CUSTOM COLOR DEFINES
-        {
-            #ifdef _WIN32
-                std::string conf_path = "conf\\";
-                std::string data_dir = "data\\";
-            #else
-                std::string conf_path = "conf/";
-                std::string data_dir = "data/";
-            #endif
-            set_path_to_main();
-            int line = count_line(data_dir + "color.txt");
 
-            for(int i = 1; line+1 > i; i+=1)
-            {
-                cv[i].color_name = read_file(data_dir + "color.txt", i);
-                cv[i].color_value = read_file(conf_path + cv[i].color_name + ".txt", 1);
-                cv[0].color_count += 1;
-            }
+        if(perm_type == true)
+        { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
+            uc[0].fgc = hex_to_rgb(read_file("ui_color.txt", 8), true), uc[0].bgc = hex_to_rgb(read_file("ui_color.txt", 11), false), uc[0].fc = hex_to_rgb(read_file("ui_color.txt", 14), false); // MAIN SCREEN
+            uc[1].fgc = hex_to_rgb(read_file("ui_color.txt", 18), true), uc[1].bgc = hex_to_rgb(read_file("ui_color.txt", 21), false), uc[1].fc = hex_to_rgb(read_file("ui_color.txt", 24), false); // WARNING SCREEN
+            uc[2].fgc = hex_to_rgb(read_file("ui_color.txt", 28), true), uc[2].bgc = hex_to_rgb(read_file("ui_color.txt", 31), false); // LIST SCREEN
+            uc[3].fgc = hex_to_rgb(read_file("ui_color.txt", 35), true), uc[3].bgc = hex_to_rgb(read_file("ui_color.txt", 38), false), uc[3].fc = hex_to_rgb(read_file("ui_color.txt", 41), false); // SUCCESS SCREEN
+            uc[4].fgc = hex_to_rgb(read_file("ui_color.txt", 45), true), uc[4].bgc = hex_to_rgb(read_file("ui_color.txt", 48), false), uc[4].fc = hex_to_rgb(read_file("ui_color.txt", 51), false); // ERROR SCREEN
+            std::cout << hex_to_rgb("#e9e9e9", true) << "test" << esc_reset;
         }
         else
         { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
@@ -216,6 +209,7 @@ int main(int argc, char* argv[])
             uc[4].fgc = colorfg_red, uc[4].bgc = colorbg_gray, uc[4].fc = colorbg_red; // ERROR SCREEN
         }
 
+        for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
         user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
         while(1)
         {
@@ -247,10 +241,10 @@ int main(int argc, char* argv[])
         }
     }
     else if(argc > 1) // MISSING ARGUMENT ERROR
-    //{
-        //clrscr();
-        //user_warn(term_x, term_y, 0, 0, colorfg_white, colorbg_black, colorbg_red, "[ERROR] Missing argument!");
-    //}
+    {
+        clrscr();
+        user_warn(term_x, term_y, 0, 0, colorfg_white, colorbg_black, colorbg_red, "[ERROR] Missing argument!");
+    }
     
     cursor_visibility(true);
     gotoxy(term_width, term_height);
