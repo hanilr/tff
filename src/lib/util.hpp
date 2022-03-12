@@ -2,9 +2,11 @@
 #ifndef _UTIL_HPP
 #define _UTIL_HPP
 
+int hex_number(int number, bool left_side);
+
 int hex_letter(char letter, bool left_side);
 
-std::string rgb_to_esc(std::string rgb, bool is_fore);
+std::string rgb_to_esc(std::string red, std::string green, std::string blue, bool is_fore);
 
 std::string hex_to_rgb(std::string chex, bool is_fore);
 
