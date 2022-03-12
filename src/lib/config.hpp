@@ -53,6 +53,8 @@ struct ui_color { std::string fgc, bgc, fc; };
 #define keymap_list "Get file list of current path."
 #define guide_list "Type 'l' then you'll get panel at right side."
 #define keymap_quit "To quit this app."
-#define guide_quit "Type 'q' then quit."
+
+// UI_COLOR FILE
+#define ui_conf_color "// DEFINES //\nfgc: foreground color\nbgc: background color\nfc: frame color\n\n// MAIN SCREEN\nfgc:\n#e9e9e9\n\nbgc:\n#161616\n\nfc:\n#303030\n\n// WARNING SCREEN\nfgc:\n#161616\n\nbgc:\n#303030\n\nfc:\n#c83737\n\n// LIST SCREEN\nfgc:\n#e9e9e9\n\nbgc:\n#161616\n\n// SUCCESS SCREEN\nfgc:\n#37c837\n\nbgc:\n#303030\n\nfc:\n#37c837\n\n// ERROR SCREEN\nfgc:\n#c83737\n\nbgc:\n#303030\n\nfc:\n#c83737"
 
 #endif /* MADE BY @hanilr */
