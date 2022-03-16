@@ -37,21 +37,35 @@ struct ui_color { std::string fgc, bgc, fc; };
 #define cursor_visible "\033[?25h"
 #define cursor_invisible "\033[?25l"
 
-// MESSAGES
+// MESSAGES SECTIONS
+// HELP SECTION
 #define help_install "Install this app to your device. You can uninstall later."
 #define suggest_install "> You can change terminal size and add new colors, if you did."
+
 #define help_uninstall "Uninstall this app from your device."
 #define suggest_uninstall "> There is no empty directory after uninstalling."
+
 #define help_list "Display what's inside a directory."
 #define suggest_list "> You don't have to execute whole program for listing files."
+
 #define help_keymap "Guide of keymaps. If you don't know keymaps of this app."
 #define suggest_keymap "> You can have much more comfort while using this app."
 #define help_help "This section."
 
+// KEYMAP SECTION
 #define keymap_search "File search section."
 #define guide_search "Type '/', enter file name then type 'return'."
-#define keymap_up "Up direction key. Available in list and search sections."
-#define keymap_down "Down direction key. Available in list and search sections."
+
+#define keymap_enter_dir "Enter a directory."
+#define guide_enter_dir "Type ':', enter directory name then type 'return'."
+
+#define direction_comment "# DIRECTION GUIDE #"
+#define keymap_up "Up direction key."
+#define keymap_down "Down direction key."
+#define guide_direction "Available in list and search sections."
+
+#define keymap_exit_dir "Go to parent directory."
+
 #define keymap_list "Get file list of current path."
 #define guide_list "Type 'l' then you'll get panel at right side."
 #define keymap_quit "To quit this app."
