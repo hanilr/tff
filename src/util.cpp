@@ -36,7 +36,7 @@ int hex_number(int number, bool left_side)
         else if(number == '9') { return 144; }
     }
     return 0;
-}
+} // 'left_side' MEAN IS IF AT LEFT SIDE THEN RETURN ORIGINAL NUMBER IF NOT THEN MULTIPLY WITH 16
 
 int hex_letter(char letter, bool left_side)
 {
@@ -59,7 +59,7 @@ int hex_letter(char letter, bool left_side)
         else if(letter == 'f') { return 240; }
     }
     return 0;
-}
+} // 'left_side' MEAN IS IF AT LEFT SIDE THEN RETURN 2 DIGIT NUMBER WHO START WITH 10 IF NOT THEN MULTIPLY WITH 16
 
 std::string rgb_to_esc(std::string red, std::string green, std::string blue, bool is_fore)
 {
@@ -67,7 +67,7 @@ std::string rgb_to_esc(std::string red, std::string green, std::string blue, boo
     if(is_fore == true) { result = "\033[38;2;" + red + ";" + green + ";" + blue + "m"; }
     else { result = "\033[48;2;" + red + ";" + green + ";" + blue + "m"; }
     return result;
-}
+} // '\033' IS ASCII ESCAPE CODE
 
 std::string hex_to_rgb(std::string chex, bool is_fore)
 {
@@ -94,13 +94,13 @@ int divide_half(int number)
 {
     if(number%2 == 0) { return number/2; }
     else { return (number-1)/2; }
-}
+} // IF CAN'T DIVIDE THEN MINUS 1 AND THEN DIVIDE 2
 
 char get_char_instantly(void)
 {
-    system("stty raw");
+    system("stty raw"); // TERMINAL 'raw' MODE
     char key = getchar();
-    system("stty cooked");
+    system("stty cooked"); // TERMINAL 'cooked' MODE
     return key;
 }
 
