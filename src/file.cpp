@@ -133,20 +133,15 @@ void path_change(std::string new_path) {  std::filesystem::current_path(new_path
 
 void set_path_to_main(void)
 {
-    #ifdef _WIN32
-        std::string dir_root = "C:\\", dir_main = "Program Files\\tff\\";
-    #else
-        std::string dir_root = ".", dir_main = "home/" + get_username() + "/.tff/";
-    #endif
-    for(int x = 0, y = 10; y > x; x+=1)
+    for(int x = 0, y = 20; y > x; x+=1)
     {
         path_change("../");
-        if(path_current().compare(dir_root) == 0)
+        if(path_current().compare("/") == 0)
         {
-            path_change(dir_main);
+            path_change("home/" + get_username() + "/.tff/");
             break;
         }
-        else if(x == 9)
+        else if(x == 19)
         {
             clrscr();
             user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");

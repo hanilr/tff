@@ -51,37 +51,30 @@ int main(int argc, char* argv[])
             std::cin >> term_size_y;
             std::cout << esc_reset;
 
-            std::string main_dir = path_current();
-            std::string term_config = term_size_x + "\n" + term_size_y;
-            #ifdef _WIN32
-                std::string compile_com = "g++ " + main_dir + "/src/main.cpp " + main_dir + "/src/file.cpp " + main_dir + "/src/util.cpp " + main_dir + "/src/ui.cpp " + main_dir + "/src/conf.cpp " + "-o ~/.tff/tff.exe";
-                std::string dir_root = "C:\\", dir_main = "Program Files\\", conf_dir = "tff\\conf\\", data_dir = "tff\\data\\", history_dir = "tff\\data\\history\\";
-            #else
-                std::string compile_com = "g++ " + main_dir + "/src/main.cpp " + main_dir + "/src/file.cpp " + main_dir + "/src/util.cpp " + main_dir + "/src/ui.cpp " + main_dir + "/src/conf.cpp " + "-o ~/.tff/tff";
-                std::string dir_root = "/", dir_main = "home/" + get_username() + "/", conf_dir = ".tff/conf/", data_dir = ".tff/data/", history_dir = ".tff/data/history/";
-            #endif
+            std::string main_dir = path_current(), term_config = term_size_x + "\n" + term_size_y;
+            std::string compile_com = "g++ " + main_dir + "/src/main.cpp " + main_dir + "/src/file.cpp " + main_dir + "/src/util.cpp " + main_dir + "/src/ui.cpp " + main_dir + "/src/conf.cpp " + "-o ~/.tff/tff";
 
-            for(int x = 0, y = 10; y > x; x+=1)
+            for(int x = 0, y = 20; y > x; x+=1)
             {
                 path_change("../");
-                if(path_current().compare(dir_root) == 0)
+                if(path_current().compare("/") == 0)
                 {
-                    path_change(dir_main);
-                    create_dir(conf_dir, true);
-                    create_dir(data_dir, false);
-                    create_dir(history_dir, false);
+                    path_change("home/" + get_username() + "/");
+                    create_dir(".tff/conf/", true);
+                    create_dir(".tff/data/", false);
+                    create_dir(".tff/data/history/", false);
 
-                    create_file(conf_dir + "terminal.txt");
-                    create_file(data_dir + "search_history.txt");
-                    create_file(conf_dir + "ui_color.txt");
+                    create_file(".tff/conf/terminal.txt");
+                    create_file(".tff/data/search_history.txt");
+                    create_file(".tff/conf/ui_color.txt");
 
-                    write_file(conf_dir + "terminal.txt", term_config, 'w');
-                    write_file(data_dir + "search_history.txt", "", 'w');
-                    write_file(conf_dir + "ui_color.txt", ui_conf_color, 'w');
+                    write_file(".tff/conf/terminal.txt", term_config, 'w');
+                    write_file(".tff/data/search_history.txt", "", 'w');
+                    write_file(".tff/conf/ui_color.txt", ui_conf_color, 'w');
                     system(compile_com.c_str());
                     break;
                 }
-                if(x == 9)
+                if(x == 19)
                 {
                     clrscr();
                     user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
@@ -110,12 +103,7 @@ int main(int argc, char* argv[])
 
             if(uninstall_decision == 'y')
             {
-                #ifdef _WIN32
-                    std::string dir_name = "tff\\";
-                #else
-                    std::string dir_name = ".tff/";
-                #endif
-                delete_dir(dir_name, true);
+                delete_dir(".tff/", true);
                 clrscr();
                 user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Successfully uninstalled!");
             }
@@ -176,17 +164,11 @@ int main(int argc, char* argv[])
     {
         bool perm_type = false;
         struct ui_color uc[5];
-        int reverse_count;
+        int reverse_count = 4;
 
         if(is_installed() == true)
         {
-            #ifdef _WIN32
-                path_change("tff\\conf\\");
-                reverse_count = 3;
-            #else
-                path_change(".tff/conf/");
-                reverse_count = 4;
-            #endif
+            path_change(".tff/conf/");
             term_width = std::stoi(read_file("terminal.txt", 1));
             term_height = std::stoi(read_file("terminal.txt", 2));
             perm_type = true;
@@ -244,17 +226,9 @@ int main(int argc, char* argv[])
                 std::string file_buffer = file_find(file_name);
                 if(is_installed() == true) // IF APPLICATION INSTALLED THEN SAVE TO HISTORY
                 {
-                    #ifdef _WIN32
-                        path_change("tff\\data\\");
-                    #else
-                        path_change(".tff/data/");
-                    #endif
+                    path_change(".tff/data/");
                     write_file("search_history.txt", "\n" + file_name, 'a');
-                    #ifdef _WIN32
-                        path_change("history\\");
-                    #else
-                        path_change("history/");
-                    #endif
+                    path_change("history/");
                     if(is_file(file_name) == true) { write_file(file_name, file_buffer, 'w'); }
                     else
                     {
@@ -265,11 +239,7 @@ int main(int argc, char* argv[])
                 else // CREATE A TEMPORARY FILE IN TEMP
                 {
                     for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
-                    #ifdef _WIN32
-                        path_change("Users\\" + get_username() + "\\AppData\\Local\\Temp\\");
-                    #else
-                        path_change("tmp/");
-                    #endif
+                    path_change("tmp/");
                     create_file(file_name);
                     write_file(file_name, file_buffer, 'w');
                 }
@@ -301,11 +271,7 @@ int main(int argc, char* argv[])
                 if(is_installed() == false) // DELETE TEMPORARY FILE IF NOT INSTALLED
                 {
                     for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
-                    #ifdef _WIN32
-                        path_change("Users\\" + get_username() + "\\AppData\\Local\\Temp\\");
-                    #else
-                        path_change("tmp/");
-                    #endif
+                    path_change("tmp/");
                     delete_file(file_name.c_str());
                 }
 

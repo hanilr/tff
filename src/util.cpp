@@ -98,45 +98,23 @@ int divide_half(int number)
 
 char get_char_instantly(void)
 {
-    char key;
-    #ifdef _WIN32
-        #include <conio.h>
-        key = getch();
-    #else 
-        system("stty raw");
-        key = getchar();
-        system("stty cooked");
-    #endif
+    system("stty raw");
+    char key = getchar();
+    system("stty cooked");
     return key;
 }
 
 std::string get_username(void)
 {
-    #ifdef _WIN32
-        #include <windows.h>
-        #include <Lmcons.h>
-
-        char username[UNLEN+1];
-        DWORD username_len = UNLEN+1;
-        GetUserName(username, &username_len);
-        return username;
-    #else
-        std::string username = getenv("USER");
-        return username;
-    #endif
+    std::string username = getenv("USER");
+    return username;
 }
 
 std::string file_find(std::string file_name)
 {
-    #ifdef _WIN32
-        std::string os_path = "C:\\";
-    #else
-        std::string os_path = "/";
-    #endif
-
     std::string file_path;
     std::filesystem::recursive_directory_iterator end;
-    std::filesystem::recursive_directory_iterator rdi(os_path, std::filesystem::directory_options::skip_permission_denied);
+    std::filesystem::recursive_directory_iterator rdi("/", std::filesystem::directory_options::skip_permission_denied);
 
     while(rdi != end)
     {

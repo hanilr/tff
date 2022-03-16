@@ -12,17 +12,12 @@
 
 bool is_installed(void)
 {
-    #ifdef _WIN32
-        std::string dir_root = "C:\\", dir_main = "Program Files\\", dir_name = "tff\\";
-    #else
-        std::string dir_root = "/", dir_main = "home/" + get_username() + "/", dir_name = ".tff/";
-    #endif
     for(int x = 0, y = 10; y > x; x+=1)
     {
         path_change("../");
-        if(path_current().compare(dir_root) == 0)
+        if(path_current().compare("/") == 0)
         {
-            path_change(dir_main);
+            path_change("home/" + get_username() + "/");
             break;
         }
         if(x == 9)
@@ -31,33 +26,23 @@ bool is_installed(void)
             user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
         }
     }
-    return is_dir(dir_name);
+    return is_dir(".tff/");
 }
 
 void change_term_size(int terminal_width, int terminal_height)
 {
-    #ifdef _WIN32
-        std::string conf_path = "conf\\";
-    #else
-        std::string conf_path = "conf/";
-    #endif
     set_path_to_main();
-    write_file(conf_path + "terminal.txt", terminal_width + "\n" + terminal_height, 'w');
+    write_file("conf/terminal.txt", terminal_width + "\n" + terminal_height, 'w');
 }
 
 void add_color(std::string color_name, std::string hex_color, bool is_fore)
 {
-    #ifdef _WIN32
-        std::string conf_path = "conf\\";
-    #else
-        std::string conf_path = "conf/";
-    #endif
     set_path_to_main();
-    if(is_file(conf_path + color_name + ".txt") == false)
+    if(is_file("conf/" + color_name + ".txt") == false)
     {
         std::string rgb = hex_to_rgb(hex_color, is_fore);
-        create_file(conf_path + color_name + ".txt");
-        write_file(conf_path + color_name + ".txt", rgb, 'w');
+        create_file("conf/" + color_name + ".txt");
+        write_file("conf/" + color_name + ".txt", rgb, 'w');
         save_in_data("color.txt", color_name);
         clrscr();
         user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Color successfully added!");
@@ -71,15 +56,10 @@ void add_color(std::string color_name, std::string hex_color, bool is_fore)
 
 void change_color(std::string color_name, std::string hex_color, bool is_fore)
 {
-    #ifdef _WIN32
-        std::string conf_path = "conf\\";
-    #else
-        std::string conf_path = "conf/";
-    #endif
-    if(is_file(conf_path + color_name + ".txt") == true)
+    if(is_file("conf/" + color_name + ".txt") == true)
     {
         std::string rgb = hex_to_rgb(hex_color, is_fore);
-        write_file(conf_path + color_name + ".txt", rgb, 'w');
+        write_file("conf/" + color_name + ".txt", rgb, 'w');
         clrscr();
         user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Color successfully changed!");
     }
@@ -92,12 +72,7 @@ void change_color(std::string color_name, std::string hex_color, bool is_fore)
 
 void remove_color(std::string color_name)
 {
-    #ifdef _WIN32
-        std::string conf_path = "conf\\";
-    #else
-        std::string conf_path = "conf/";
-    #endif
-    std::string color_path = conf_path + color_name + ".txt";
+    std::string color_path = "conf/" + color_name + ".txt";
     set_path_to_main();
     if(is_file(color_path) == true)
     {
@@ -114,13 +89,8 @@ void remove_color(std::string color_name)
 
 void save_in_data(std::string file_name, std::string file_content)
 {
-    #ifdef _WIN32
-        std::string data_path = "data\\";
-    #else
-        std::string data_path = "data/";
-    #endif
     set_path_to_main();
-    if(is_file(data_path + file_name + ".txt") == false)
+    if(is_file("data/" + file_name + ".txt") == false)
     {
         create_file(file_name + ".txt");
         write_file(file_name, file_content, 'w');
