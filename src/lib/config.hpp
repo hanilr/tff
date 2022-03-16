@@ -2,7 +2,8 @@
 #ifndef _CONFIG_HPP
 #define _CONFIG_HPP
 
-struct ui_color { std::string fgc, bgc, fc; };
+struct ui_color { std::string fgc, bgc, fc; }; // USER INTERFACE COLOR BUFFER
+// IF USER ADDED A CUSTOM COLOR THEN STORE IN THIS STRUCTURE
 
 // DEFAULT TERMINAL SIZE
 #define term_x 80
