@@ -15,22 +15,19 @@
 
 int main(int argc, char* argv[])
 {
-    int term_width = term_x, term_height = term_y;
-    struct color_variable cv[256];
-    cv[0].color_count = 0;
-
-    cursor_visibility(false);
-    if(argc == 2 && strcmp(argv[1], "-install") == 0)
+    int term_width = term_x, term_height = term_y; // SET TERMINAL SIZES WITH DEFAULT VALUES
+    cursor_visibility(false); // SET CURSOR TO INVISIBLE
+    if(argc == 2 && strcmp(argv[1], "-install") == 0) // INSTALL SECTION
     {
         clrscr();
-        user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_white, "Do you accept to install? (y/n)");
+        user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_white, "Do you accept to install? (y/n)"); // USER AGREEMENT
 
         goto_color_print(divide_half(term_x)-2, divide_half(term_y)+2, colorfg_white, colorbg_gray, text_bold, ">   <");
         gotoxy(divide_half(term_x), divide_half(term_y)+2);
-        char install_decision = get_char_instantly();
+        char install_decision = get_char_instantly(); // IF DECISION IS 'y' THEN INSTALL IF NOT TERMINATE THE PROCESS
 
         gotoxy(divide_half(term_x), divide_half(term_y)+2);
-        if(install_decision == 'y')
+        if(install_decision == 'y') // IF DECISION IS YES
         {
             // INSTALL SECTION
             std::string term_size_x, term_size_y;
@@ -40,7 +37,7 @@ int main(int argc, char* argv[])
 
             gotoxy(divide_half(term_x)-1, divide_half(term_y)+2);
             std::cout << colorfg_green << colorbg_gray << text_bold;
-            std::cin >> term_size_x;
+            std::cin >> term_size_x; // GET TERMINAL WIDTH
             std::cout << esc_reset;
 
             clrscr();
@@ -48,7 +45,7 @@ int main(int argc, char* argv[])
             goto_color_print(divide_half(term_x)-3, divide_half(term_y)+2, colorfg_white, colorbg_gray, text_bold, ">     <");
             gotoxy(divide_half(term_x)-1, divide_half(term_y)+2);
             std::cout << colorfg_green << colorbg_gray << text_bold;
-            std::cin >> term_size_y;
+            std::cin >> term_size_y; // GET TERMINAL HEIGHT
             std::cout << esc_reset;
 
             std::string main_dir = path_current(), term_config = term_size_x + "\n" + term_size_y;
@@ -56,23 +53,23 @@ int main(int argc, char* argv[])
 
             for(int x = 0, y = 20; y > x; x+=1)
             {
-                path_change("../");
-                if(path_current().compare("/") == 0)
+                path_change("../"); // GO TO PARENT DIRECTORY
+                if(path_current().compare("/") == 0) // IF DIRECTORY IS '/'
                 {
-                    path_change("home/" + get_username() + "/");
-                    create_dir(".tff/conf/", true);
-                    create_dir(".tff/data/", false);
-                    create_dir(".tff/data/history/", false);
+                    path_change("home/" + get_username() + "/"); // CHANGE PATH TO HOME + USERNAME
+                    create_dir(".tff/conf/", true); // Create '.tff/' and 'conf/' DIRECTORIES
+                    create_dir(".tff/data/history/", true); // CREATE 'data/' and 'history/' DIRECTORIES
 
-                    create_file(".tff/conf/terminal.txt");
-                    create_file(".tff/data/search_history.txt");
-                    create_file(".tff/conf/ui_color.txt");
+                    create_file(".tff/conf/terminal.txt"); // CREATE TERMINAL SIZE FILE
+                    create_file(".tff/data/search_history.txt"); // CREATE SEARCH HISTORY
+                    create_file(".tff/conf/ui_color.txt"); // CREATE CUSTOM UI COLOR FILE
 
-                    write_file(".tff/conf/terminal.txt", term_config, 'w');
+                    write_file(".tff/conf/terminal.txt", term_config, 'w'); // ENTER TERMINAL SIZE TO FILE
                     write_file(".tff/data/search_history.txt", "", 'w');
-                    write_file(".tff/conf/ui_color.txt", ui_conf_color, 'w');
-                    system(compile_com.c_str());
-                    break;
+                    write_file(".tff/conf/ui_color.txt", ui_conf_color, 'w'); // ENTER UI COLORS TO FILE
+
+                    system(compile_com.c_str()); // COMPILE FILE TO CURRENT DIRECTORY
+                    break; // FINISH THE INSTALL SECTION
                 }
                 if(x == 19)
                 {
@@ -80,9 +77,9 @@ int main(int argc, char* argv[])
                     user_warn(term_x, term_y, 0, 0, colorfg_red, colorbg_gray, colorbg_red, "[ERROR] Root directory fault!");
                 }
             }
+
             clrscr();
             user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Successfully installed!");
-            // ---------------
         }
         else
         {
@@ -99,11 +96,11 @@ int main(int argc, char* argv[])
 
             goto_color_print(divide_half(term_x)-2, divide_half(term_y)+2, colorfg_white, colorbg_gray, text_bold, ">   <");
             gotoxy(divide_half(term_x), divide_half(term_y)+2);
-            char uninstall_decision = get_char_instantly();
+            char uninstall_decision = get_char_instantly(); // IF DECISION IS 'y' THEN UNINSTALL IF NOT TERMINATE THE PROCESS
 
-            if(uninstall_decision == 'y')
+            if(uninstall_decision == 'y') // IF DECISION IS YES
             {
-                delete_dir(".tff/", true);
+                delete_dir(".tff/", true); // DELETE '.tff/' DIRECTORY WITH SUBFOLDERS
                 clrscr();
                 user_warn(term_x, term_y, 0, 0, colorfg_green, colorbg_gray, colorbg_green, "Successfully uninstalled!");
             }
@@ -121,7 +118,7 @@ int main(int argc, char* argv[])
     }
     else if(argc == 2 && strcmp(argv[1], "-list") == 0)
     {
-        int pos = 0;
+        int pos = 0; // CURSOR POSITION
         while(1)
         {
             user_screen(term_width-4, term_height-4, 2, 2, colorbg_gray, colorbg_white);
@@ -137,17 +134,17 @@ int main(int argc, char* argv[])
             goto_color_print(term_width-get_username().length()-16, 8, colorfg_white, colorbg_gray, text_bold, "[HEIGHT] ");
             goto_color_print(term_width-get_username().length()-7, 8, colorfg_white, colorbg_gray, "", std::to_string(term_height));
 
-            int list_length = file_list(5, 7, colorfg_white, colorbg_gray, 0+pos, 12+pos);
+            int list_length = file_list(5, 7, colorfg_white, colorbg_gray, 0+pos, 12+pos); // PRINT FILE LIST WITH CERTAIN POSITION AND NUMBER
 
             goto_color_print(5, term_height-3, colorfg_white, colorbg_gray, text_bold, ">");
             std::cout << colorfg_white << colorbg_gray;
-            char key = get_char_instantly();
+            char key = get_char_instantly(); // GET COMMAND AS KEYMAPS
             std::cout << esc_reset;
 
-            if(key == 'k' && pos != 0) { pos-=1; } // UP
-            else if(key == 'j' && pos != list_length-13 && list_length > 13) { pos+=1; } // DOWN
-            else if(key == 'c') { path_change("../"); }
-            else if(key == ':')
+            if(key == 'k' && pos != 0) { pos-=1; } // CURSOR UP
+            else if(key == 'j' && pos != list_length-13 && list_length > 13) { pos+=1; } // CURSOR DOWN
+            else if(key == 'c') { path_change("../"); } // CHANGE PATH TO PARENT DIRECTORY
+            else if(key == ':') // CHANGE PATH TO TYPED DIRECTORY
             {
                 std::string enter_dir;
                 std::cout << colorfg_white << colorbg_gray;
@@ -208,19 +205,18 @@ int main(int argc, char* argv[])
     }
     else if(argc == 1) // USER INTERFACE
     {
-        bool perm_type = false;
-        struct ui_color uc[5];
+        bool perm_type = false; // IF USER INSTALLED THEN 'perm_type' IS TRUE
+        struct ui_color uc[5]; // CUSTOM COLOR STRUCTURE DEFINATION
         int reverse_count = 4, pos = 0;
 
-        if(is_installed() == true)
+        if(is_installed() == true) // IF INSTALLED THEN GET TERMINAL SIZES
         {
             path_change(".tff/conf/");
             term_width = std::stoi(read_file("terminal.txt", 1));
             term_height = std::stoi(read_file("terminal.txt", 2));
             perm_type = true;
         }
-
-        if(perm_type == true)
+        if(perm_type == true) // IF INSTALLED THEN GET TERMINAL UI COLORS
         { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
             uc[0].fgc = hex_to_rgb(read_file("ui_color.txt", 8), true), uc[0].bgc = hex_to_rgb(read_file("ui_color.txt", 11), false), uc[0].fc = hex_to_rgb(read_file("ui_color.txt", 14), false); // MAIN SCREEN
             uc[1].fgc = hex_to_rgb(read_file("ui_color.txt", 18), true), uc[1].bgc = hex_to_rgb(read_file("ui_color.txt", 21), false), uc[1].fc = hex_to_rgb(read_file("ui_color.txt", 24), false); // WARNING SCREEN
@@ -228,7 +224,7 @@ int main(int argc, char* argv[])
             uc[3].fgc = hex_to_rgb(read_file("ui_color.txt", 35), true), uc[3].bgc = hex_to_rgb(read_file("ui_color.txt", 38), false), uc[3].fc = hex_to_rgb(read_file("ui_color.txt", 41), false); // SUCCESS SCREEN
             uc[4].fgc = hex_to_rgb(read_file("ui_color.txt", 45), true), uc[4].bgc = hex_to_rgb(read_file("ui_color.txt", 48), false), uc[4].fc = hex_to_rgb(read_file("ui_color.txt", 51), false); // ERROR SCREEN
         }
-        else
+        else // IF NOT INSTALLED THEN SET UI COLOR TO DEFAULT VALUES
         { // FGC: FOREGROUND COLOR // BGC: BACKGROUND COLOR // FC: FRAME COLOR
             
             uc[0].fgc = colorfg_white, uc[0].bgc = colorbg_black, uc[0].fc = colorbg_gray; // MAIN SCREEN
@@ -238,7 +234,7 @@ int main(int argc, char* argv[])
             uc[4].fgc = colorfg_red, uc[4].bgc = colorbg_gray, uc[4].fc = colorbg_red; // ERROR SCREEN
         }
 
-        for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
+        for(int i = 0; 20 > i; i+=1) { path_change("../"); } // SET PATH TO MAIN OS DIRECTORY
         while(1)
         {
             user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
@@ -264,7 +260,7 @@ int main(int argc, char* argv[])
             std::cout << esc_reset;
 
             // KEY MAPS
-            if(key == '/')
+            if(key == '/') // SEARCH KEYMAP
             {
                 std::string file_name;
                 std::cout << uc[0].fgc << uc[0].bgc;
@@ -286,7 +282,7 @@ int main(int argc, char* argv[])
                 }
                 else // CREATE A TEMPORARY FILE IN TEMP
                 {
-                    for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
+                    for(int i = 0; 20 > i; i+=1) { path_change("../"); }
                     path_change("tmp/");
                     create_file(file_name);
                     write_file(file_name, file_buffer, 'w');
@@ -294,7 +290,6 @@ int main(int argc, char* argv[])
                 
                 int buffer_line = count_line(file_name), move_count, file_line_position = 0;
                 if(buffer_line > term_y - 4) { move_count = buffer_line - (term_y - 5); }
-
                 while(1)
                 {
                     user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
@@ -325,10 +320,10 @@ int main(int argc, char* argv[])
 
                 for(int i = 0; reverse_count+1 > i; i+=1) { path_change("../"); }
             }
-            else if(key == 'k' && pos != 0) { pos-=1; } // UP
-            else if(key == 'j' && pos != list_length-(term_height-7)) { pos+=1; } // DOWN
-            else if(key == 'c') { path_change("../"); }
-            else if(key == ':')
+            else if(key == 'k' && pos != 0) { pos-=1; } // CURSOR UP
+            else if(key == 'j' && pos != list_length-(term_height-7)) { pos+=1; } // CURSOR DOWN
+            else if(key == 'c') { path_change("../"); } // SET PATH TO PARENT DIRECTORY
+            else if(key == ':') // CHANGE PATH TO TYPED DIRECTORY
             {
                 std::string enter_dir;
                 std::cout << uc[0].fgc << uc[0].bgc;
@@ -336,7 +331,7 @@ int main(int argc, char* argv[])
                 std::cout << esc_reset;
                 path_change(enter_dir);
             }
-            else if(key == 'q')
+            else if(key == 'q') // CLOSE THE APPLICATION
             {
                 gotoxy(term_width, term_height);
                 return 0;
@@ -351,9 +346,9 @@ int main(int argc, char* argv[])
         user_warn(term_x, term_y, 0, 0, colorfg_white, colorbg_black, colorbg_red, "[ERROR] Missing argument!");
     }
     
-    cursor_visibility(true);
-    gotoxy(term_width, term_height);
-    return 0;
+    cursor_visibility(true); // SET CURSOR TO VISIBLE
+    gotoxy(term_width, term_height); // SET POSITION TO END OF THE TERMINAL
+    return 0; // EXIT THE APPLICATION
 }
 
 /* MADE BY @hanilr */
