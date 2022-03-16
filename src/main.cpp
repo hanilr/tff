@@ -138,7 +138,6 @@ int main(int argc, char* argv[])
             goto_color_print(term_width-get_username().length()-7, 8, colorfg_white, colorbg_gray, "", std::to_string(term_height));
 
             int list_length = file_list(5, 7, colorfg_white, colorbg_gray, 0+pos, 12+pos);
-            if(list_length < 13) { break; }
 
             goto_color_print(5, term_height-3, colorfg_white, colorbg_gray, text_bold, ">");
             std::cout << colorfg_white << colorbg_gray;
@@ -146,7 +145,16 @@ int main(int argc, char* argv[])
             std::cout << esc_reset;
 
             if(key == 'k' && pos != 0) { pos-=1; } // UP
-            else if(key == 'j' && pos != list_length-13) { pos+=1; } // DOWN
+            else if(key == 'j' && pos != list_length-13 && list_length > 13) { pos+=1; } // DOWN
+            else if(key == 'c') { path_change("../"); }
+            else if(key == ':')
+            {
+                std::string enter_dir;
+                std::cout << colorfg_white << colorbg_gray;
+                std::cin >> enter_dir;
+                std::cout << esc_reset;
+                path_change(enter_dir);
+            }
             else if(key == 'q') { break; } // QUIT
         }
     }
@@ -158,11 +166,19 @@ int main(int argc, char* argv[])
         goto_color_print(11, 3, colorfg_white, colorbg_gray, "", keymap_search);
         goto_color_print(3, 4, colorfg_white, colorbg_gray, "", guide_search);
 
-        goto_color_print(3, 19, colorfg_white, colorbg_gray, text_bold, "[ 'k' ]");
-        goto_color_print(11, 19, colorfg_white, colorbg_gray, "", keymap_up);
+        goto_color_print(3, 6, colorfg_white, colorbg_gray, text_bold, "[ ':' ]");
+        goto_color_print(11, 6, colorfg_white, colorbg_gray, "", keymap_enter_dir);
+        goto_color_print(3, 7, colorfg_white, colorbg_gray, "", guide_enter_dir);
 
-        goto_color_print(3, 20, colorfg_white, colorbg_gray, text_bold, "[ 'j' ]");
-        goto_color_print(11, 20, colorfg_white, colorbg_gray, "", keymap_down);
+        goto_color_print(55, 20, colorfg_white, colorbg_gray, text_bold, direction_comment);
+        goto_color_print(52, 21, colorfg_white, colorbg_gray, text_bold, "[ 'k' ]");
+        goto_color_print(60, 21, colorfg_white, colorbg_gray, "", keymap_up);
+
+        goto_color_print(52, 22, colorfg_white, colorbg_gray, text_bold, "[ 'j' ]");
+        goto_color_print(60, 22, colorfg_white, colorbg_gray, "", keymap_down);
+
+        goto_color_print(3, 21, colorfg_white, colorbg_gray, text_bold, "[ 'c' ]");
+        goto_color_print(11, 21, colorfg_white, colorbg_gray, "", keymap_exit_dir);
 
         goto_color_print(3, 22, colorfg_white, colorbg_gray, text_bold, "[ 'q' ]");
         goto_color_print(11, 22, colorfg_white, colorbg_gray, "", keymap_quit);
@@ -311,6 +327,15 @@ int main(int argc, char* argv[])
             }
             else if(key == 'k' && pos != 0) { pos-=1; } // UP
             else if(key == 'j' && pos != list_length-(term_height-7)) { pos+=1; } // DOWN
+            else if(key == 'c') { path_change("../"); }
+            else if(key == ':')
+            {
+                std::string enter_dir;
+                std::cout << uc[0].fgc << uc[0].bgc;
+                std::cin >> enter_dir;
+                std::cout << esc_reset;
+                path_change(enter_dir);
+            }
             else if(key == 'q')
             {
                 gotoxy(term_width, term_height);
