@@ -1,4 +1,5 @@
 # TERMINAL FILE FINDER (MAKEFILE) #
+# ONLY WORK ON LINUX #
 
 CC = g++
 c17 = -std=c++17
@@ -10,15 +11,9 @@ conf = src/conf.cpp
 ui = src/ui.cpp
 lib = $(file) $(util) $(conf) $(ui)
 
-ifeq ($(OS),Windows_NT)
-	output = tff.exe
-	exe = tff.exe
-	delete = del
-else
-	output = tff
-	exe = ./tff
-	delete = rm
-endif
+output = tff
+exe = ./tff
+delete = rm
 
 .PHONY: run clean install uninstall
 
