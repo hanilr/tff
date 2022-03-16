@@ -121,10 +121,34 @@ int main(int argc, char* argv[])
     }
     else if(argc == 2 && strcmp(argv[1], "-list") == 0)
     {
-        clrscr();
-        bg_color(divide_half(term_x), term_y-1, divide_half(divide_half(term_x)), 0, colorbg_gray);
-        draw_frame(divide_half(term_x), term_y-1, divide_half(divide_half(term_x)), 0, colorbg_white);
-        file_list(divide_half(divide_half(term_x))+2, 2, term_y, colorbg_gray, colorfg_white);
+        int pos = 0;
+        while(1)
+        {
+            user_screen(term_width-4, term_height-4, 2, 2, colorbg_gray, colorbg_white);
+            goto_color_print(5, 5, colorfg_white, colorbg_gray, text_bold, "[CURRENT PATH] ");
+            goto_color_print(20, 5, colorfg_white, colorbg_gray, "", path_current());
+
+            goto_color_print(term_width-get_username().length()-16, 5, colorfg_white, colorbg_gray, text_bold, "[USERNAME] ");
+            goto_color_print(term_width-get_username().length()-5, 5, colorfg_white, colorbg_gray, "", get_username());
+
+            goto_color_print(term_width-get_username().length()-16, 7, colorfg_white, colorbg_gray, text_bold, "[WIDTH] ");
+            goto_color_print(term_width-get_username().length()-8, 7, colorfg_white, colorbg_gray, "", std::to_string(term_width));
+
+            goto_color_print(term_width-get_username().length()-16, 8, colorfg_white, colorbg_gray, text_bold, "[HEIGHT] ");
+            goto_color_print(term_width-get_username().length()-7, 8, colorfg_white, colorbg_gray, "", std::to_string(term_height));
+
+            int list_length = file_list(5, 7, colorfg_white, colorbg_gray, 0+pos, 12+pos);
+            if(list_length < 13) { break; }
+
+            goto_color_print(5, term_height-3, colorfg_white, colorbg_gray, text_bold, ">");
+            std::cout << colorfg_white << colorbg_gray;
+            char key = get_char_instantly();
+            std::cout << esc_reset;
+
+            if(key == 'k' && pos != 0) { pos-=1; } // UP
+            else if(key == 'j' && pos != list_length-13) { pos+=1; } // DOWN
+            else if(key == 'q') { break; } // QUIT
+        }
     }
     else if(argc == 2 && strcmp(argv[1], "-keymap") == 0)
     {
@@ -133,6 +157,12 @@ int main(int argc, char* argv[])
         goto_color_print(3, 3, colorfg_white, colorbg_gray, text_bold, "[ '/' ]");
         goto_color_print(11, 3, colorfg_white, colorbg_gray, "", keymap_search);
         goto_color_print(3, 4, colorfg_white, colorbg_gray, "", guide_search);
+
+        goto_color_print(3, 19, colorfg_white, colorbg_gray, text_bold, "[ 'k' ]");
+        goto_color_print(11, 19, colorfg_white, colorbg_gray, "", keymap_up);
+
+        goto_color_print(3, 20, colorfg_white, colorbg_gray, text_bold, "[ 'j' ]");
+        goto_color_print(11, 20, colorfg_white, colorbg_gray, "", keymap_down);
 
         goto_color_print(3, 22, colorfg_white, colorbg_gray, text_bold, "[ 'q' ]");
         goto_color_print(11, 22, colorfg_white, colorbg_gray, "", keymap_quit);
@@ -164,7 +194,7 @@ int main(int argc, char* argv[])
     {
         bool perm_type = false;
         struct ui_color uc[5];
-        int reverse_count = 4;
+        int reverse_count = 4, pos = 0;
 
         if(is_installed() == true)
         {
@@ -198,9 +228,7 @@ int main(int argc, char* argv[])
             user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
             goto_color_print(3, 3, uc[0].fgc, uc[0].bgc, text_bold, "[CURRENT PATH] ");
             goto_color_print(18, 3, uc[0].fgc, uc[0].bgc, "", path_current());
-            file_list(0, 0, term_height, uc[2].fgc, uc[2].bgc);
-            goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
-
+            
             goto_color_print(term_width-get_username().length()-14, 3, uc[0].fgc, uc[0].bgc, text_bold, "[USERNAME] ");
             goto_color_print(term_width-get_username().length()-3, 3, uc[0].fgc, uc[0].bgc, "", get_username());
 
@@ -210,11 +238,15 @@ int main(int argc, char* argv[])
             goto_color_print(term_width-get_username().length()-14, 6, uc[0].fgc, uc[0].bgc, text_bold, "[HEIGHT] ");
             goto_color_print(term_width-get_username().length()-5, 6, uc[0].fgc, uc[0].bgc, "", std::to_string(term_height));
 
+            int list_length = file_list(3, 5, uc[0].fgc, uc[0].bgc, 0+pos, (term_height-8)+pos);
+            goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
             gotoxy(5, term_height-1);
+
             // KEY MAP SECTION
             std::cout << uc[0].fgc << uc[0].bgc;
             char key = get_char_instantly();
             std::cout << esc_reset;
+
             // KEY MAPS
             if(key == '/')
             {
@@ -277,6 +309,8 @@ int main(int argc, char* argv[])
 
                 for(int i = 0; reverse_count+1 > i; i+=1) { path_change("../"); }
             }
+            else if(key == 'k' && pos != 0) { pos-=1; } // UP
+            else if(key == 'j' && pos != list_length-(term_height-7)) { pos+=1; } // DOWN
             else if(key == 'q')
             {
                 gotoxy(term_width, term_height);
