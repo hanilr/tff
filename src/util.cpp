@@ -131,22 +131,23 @@ std::string file_find(std::string file_name)
     return file_path;
 }   
 
-void file_list(int pos_x, int pos_y, int theight, std::string fgcolor, std::string bgcolor)
+int file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor, int list_start, int list_end)
 {
-    int i = 0;
+    int x = 0, y = 0;
     for(const auto & get_file_name : std::filesystem::directory_iterator(std::filesystem::current_path()))
     {
         std::string file_name = get_file_name.path();
         std::string cpath = std::filesystem::current_path();
         int file_name_length = file_name.length() - cpath.length();
-        goto_color_print(pos_x+3, pos_y+i+5, fgcolor, bgcolor, "", file_name.substr(cpath.length(), file_name_length));
-        i+=1;
-        if(i == theight-7)
+
+        if(x >= list_start && x <= list_end)
         {
-            goto_color_print(pos_x+3, pos_y+i+3, fgcolor, bgcolor, "", "/..");
-            break;
+            goto_color_print(pos_x, pos_y+y, fgcolor, bgcolor, "", file_name.substr(cpath.length(), file_name_length));
+            y+=1;
         }
+        x+=1;
     }
+    return x;
 }
 
 /* MADE BY @hanilr */

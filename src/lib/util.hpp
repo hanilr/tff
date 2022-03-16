@@ -18,6 +18,6 @@ std::string get_username(void);
 
 std::string file_find(std::string file_name);
 
-void file_list(int pos_x, int pos_y, int theight, std::string fgcolor, std::string bgcolor);
+int file_list(int pos_x, int pos_y, std::string fgcolor, std::string bgcolor, int list_start, int list_end);
 
 #endif /* MADE BY @hanilr */
