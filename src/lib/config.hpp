@@ -50,6 +50,8 @@ struct ui_color { std::string fgc, bgc, fc; };
 
 #define keymap_search "File search section."
 #define guide_search "Type '/', enter file name then type 'return'."
+#define keymap_up "Up direction key. Available in list and search sections."
+#define keymap_down "Down direction key. Available in list and search sections."
 #define keymap_list "Get file list of current path."
 #define guide_list "Type 'l' then you'll get panel at right side."
 #define keymap_quit "To quit this app."
