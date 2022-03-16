@@ -56,8 +56,8 @@ void write_file(std::string file_name, std::string file_content, char perm_type)
     if(is_file(file_name) == true)
     {
         std::fstream wf(file_name);
-        if(perm_type == 'w') { wf << file_content; }
-        else if(perm_type == 'a')
+        if(perm_type == 'w') { wf << file_content; } // WRITE MODE
+        else if(perm_type == 'a') // APPEND MODE
         {
             std::string file_content_temp;
             wf >> file_content_temp;
@@ -71,16 +71,16 @@ void write_file(std::string file_name, std::string file_content, char perm_type)
         wf.close();
     }
     else { fprintf(stderr, "\nFILE ERROR: File doesn't exist! (WRITE)\n"); }
-}
+} // 'w' = WRITE, 'a' = APPEND
 
 std::string read_file(std::string file_name, int line)
 {
     if(is_file(file_name) == true)
     {
         std::string file_content;
-
         std::ifstream rf(file_name);
-        if(line == 0)
+
+        if(line == 0) // READ WHOLE FILE
         {
             std::string file_content_line;
             while(getline(rf, file_content_line)) { file_content = file_content + file_content_line + '\n'; }
@@ -88,7 +88,6 @@ std::string read_file(std::string file_name, int line)
         else
         {
             int i = 0;
-
             while(line > i)
             {
                 getline(rf, file_content);
@@ -103,7 +102,7 @@ std::string read_file(std::string file_name, int line)
         fprintf(stderr, "\nFILE ERROR: File doesn't exist! (READ)\n");
         return "!ERROR!";
     }
-}
+} // IF 'line' VALUE IS 0 THEN READ WHOLE FILE
 
 int count_line(std::string file_name)
 {
@@ -111,20 +110,10 @@ int count_line(std::string file_name)
     int i = 0, count = 1;
     for(i; file_content.length() > i; i+=1)
     {
-        if(file_content[i] == '\n') { count+=1; }
-        if(file_content[i] == '\0') { break; }
+        if(file_content[i] == '\n') { count+=1; } // IF NEW LINE DETECTED THEN INCREASE 'count'
+        if(file_content[i] == '\0') { break; } // IF FILE ENDED THEN STOP THE LOOP
     }
     return count;
-}
-
-std::uintmax_t size_file(std::string file_name)
-{
-    if(is_file(file_name) == true) { return std::filesystem::file_size(file_name); }
-    else
-    {
-        fprintf(stderr, "\nFILE ERROR: File doesn't exist! (SIZE)\n");
-        return 0;
-    }
 }
 
 std::string path_current(void) { return std::filesystem::current_path(); }
