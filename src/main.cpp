@@ -150,7 +150,7 @@ int main(int argc, char* argv[])
                 std::cout << colorfg_white << colorbg_gray;
                 std::cin >> enter_dir;
                 std::cout << esc_reset;
-                path_change(enter_dir);
+                if(enter_dir.compare("q") != 0) { path_change(enter_dir); } // BREAK CHANGE PATH STATEMENT
             }
             else if(key == 'q') { break; } // QUIT
         }
@@ -267,58 +267,61 @@ int main(int argc, char* argv[])
                 std::cin >> file_name;
                 std::cout << esc_reset;
 
-                std::string file_buffer = file_find(file_name);
-                if(is_installed() == true) // IF APPLICATION INSTALLED THEN SAVE TO HISTORY
+                if(file_name.compare("q") != 0)
                 {
-                    path_change(".tff/data/");
-                    write_file("search_history.txt", "\n" + file_name, 'a');
-                    path_change("history/");
-                    if(is_file(file_name) == true) { write_file(file_name, file_buffer, 'w'); }
-                    else
+                    std::string file_buffer = file_find(file_name);
+                    if(is_installed() == true) // IF APPLICATION INSTALLED THEN SAVE TO HISTORY
                     {
+                        path_change(".tff/data/");
+                        write_file("search_history.txt", "\n" + file_name, 'a');
+                        path_change("history/");
+                        if(is_file(file_name) == true) { write_file(file_name, file_buffer, 'w'); }
+                        else
+                        {
+                            create_file(file_name);
+                            write_file(file_name, file_buffer, 'w');
+                        }
+                    }
+                    else // CREATE A TEMPORARY FILE IN TEMP
+                    {
+                        for(int i = 0; 20 > i; i+=1) { path_change("../"); }
+                        path_change("tmp/");
                         create_file(file_name);
                         write_file(file_name, file_buffer, 'w');
                     }
-                }
-                else // CREATE A TEMPORARY FILE IN TEMP
-                {
-                    for(int i = 0; 20 > i; i+=1) { path_change("../"); }
-                    path_change("tmp/");
-                    create_file(file_name);
-                    write_file(file_name, file_buffer, 'w');
-                }
                 
-                int buffer_line = count_line(file_name), move_count, file_line_position = 0;
-                if(buffer_line > term_y - 4) { move_count = buffer_line - (term_y - 5); }
-                while(1)
-                {
-                    user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
-                    goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
-
-                    for(int i = 0; buffer_line > i; i+=1)
+                    int buffer_line = count_line(file_name), move_count, file_line_position = 0;
+                    if(buffer_line > term_y - 4) { move_count = buffer_line - (term_y - 5); }
+                    while(1)
                     {
-                        goto_color_print(1, i+3, uc[0].fgc, uc[0].bgc, "", read_file(file_name, file_line_position+i));
-                        if(i == term_y - 4) { break; }
+                        user_screen(term_width, term_height, 0, 0, uc[0].bgc, uc[0].fc);
+                        goto_color_print(3, term_height-1, uc[0].fgc, uc[0].bgc, text_bold, ">");
+
+                        for(int i = 0; buffer_line > i; i+=1)
+                        {
+                            goto_color_print(1, i+3, uc[0].fgc, uc[0].bgc, "", read_file(file_name, file_line_position+i));
+                            if(i == term_y - 4) { break; }
+                        }
+                        draw_frame(term_width, term_height, 0, 0, uc[0].fc);
+
+                        gotoxy(5, term_height-1);
+                        std::cout << uc[0].fgc << uc[0].bgc;
+                        char key_list = get_char_instantly();
+                        std::cout << esc_reset;
+
+                        if(key_list == 'k' && move_count != '\0' && file_line_position != 0) { file_line_position-=1; } // MOVE CURSOR TO UP
+                        else if(key_list == 'j' && move_count != '\0' && file_line_position != move_count) { file_line_position+=1; } // MOVE CURSOR TO DOWN
+                        else if(key_list == 'q') { break; }
                     }
-                    draw_frame(term_width, term_height, 0, 0, uc[0].fc);
+                    if(is_installed() == false) // DELETE TEMPORARY FILE IF NOT INSTALLED
+                    {
+                        for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
+                        path_change("tmp/");
+                        delete_file(file_name.c_str());
+                    }
 
-                    gotoxy(5, term_height-1);
-                    std::cout << uc[0].fgc << uc[0].bgc;
-                    char key_list = get_char_instantly();
-                    std::cout << esc_reset;
-
-                    if(key_list == 'k' && move_count != '\0' && file_line_position != 0) { file_line_position-=1; } // MOVE CURSOR TO UP
-                    else if(key_list == 'j' && move_count != '\0' && file_line_position != move_count) { file_line_position+=1; } // MOVE CURSOR TO DOWN
-                    else if(key_list == 'q') { break; }
+                    for(int i = 0; reverse_count+1 > i; i+=1) { path_change("../"); }
                 }
-                if(is_installed() == false) // DELETE TEMPORARY FILE IF NOT INSTALLED
-                {
-                    for(int i = 0; reverse_count > i; i+=1) { path_change("../"); }
-                    path_change("tmp/");
-                    delete_file(file_name.c_str());
-                }
-
-                for(int i = 0; reverse_count+1 > i; i+=1) { path_change("../"); }
             }
             else if(key == 'k' && pos != 0) { pos-=1; } // CURSOR UP
             else if(key == 'j' && pos != list_length-(term_height-7)) { pos+=1; } // CURSOR DOWN
@@ -329,7 +332,7 @@ int main(int argc, char* argv[])
                 std::cout << uc[0].fgc << uc[0].bgc;
                 std::cin >> enter_dir;
                 std::cout << esc_reset;
-                path_change(enter_dir);
+                if(enter_dir.compare("q") != 0) { path_change(enter_dir); }
             }
             else if(key == 'q') // CLOSE THE APPLICATION
             {
