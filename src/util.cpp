@@ -11,54 +11,22 @@
 
 int hex_number(int number, bool left_side)
 {
-    if(left_side == false)
-    {
-        if(number == '1') { return 1; }
-        else if(number == '2') { return 2; }
-        else if(number == '3') { return 3; }
-        else if(number == '4') { return 4; }
-        else if(number == '5') { return 5; }
-        else if(number == '6') { return 6; }
-        else if(number == '7') { return 7; }
-        else if(number == '8') { return 8; }
-        else if(number == '9') { return 9; }
-    }
-    else
-    {
-        if(number == '1') { return 16; }
-        else if(number == '2') { return 32; }
-        else if(number == '3') { return 48; }
-        else if(number == '4') { return 64; }
-        else if(number == '5') { return 80; }
-        else if(number == '6') { return 96; }
-        else if(number == '7') { return 112; }
-        else if(number == '8') { return 128; }
-        else if(number == '9') { return 144; }
-    }
+    if(left_side == false) { return number; }
+    else if(left_side == true) { return number*16; }
     return 0;
 } // 'left_side' MEAN IS IF AT LEFT SIDE THEN RETURN ORIGINAL NUMBER IF NOT THEN MULTIPLY WITH 16
 
 int hex_letter(char letter, bool left_side)
 {
-    if(left_side == false)
-    {
-        if(letter == 'a') { return 10; }
-        else if(letter == 'b') { return 11; }
-        else if(letter == 'c') { return 12; }
-        else if(letter == 'd') { return 13; }
-        else if(letter == 'e') { return 14; }
-        else if(letter == 'f') { return 15; }
-    }
-    else
-    {
-        if(letter == 'a') { return 160; }
-        else if(letter == 'b') { return 176; }
-        else if(letter == 'c') { return 192; }
-        else if(letter == 'd') { return 208; }
-        else if(letter == 'e') { return 224; }
-        else if(letter == 'f') { return 240; }
-    }
-    return 0;
+    int result;
+    if(letter == 'a') { result = 10; }
+    else if(letter == 'b') { result = 11; }
+    else if(letter == 'c') { result = 12; }
+    else if(letter == 'd') { result = 13; }
+    else if(letter == 'e') { result = 14; }
+    else if(letter == 'f') { result = 15; }
+    if(left_side == true) { result*=16; }
+    return result;
 } // 'left_side' MEAN IS IF AT LEFT SIDE THEN RETURN 2 DIGIT NUMBER WHO START WITH 10 IF NOT THEN MULTIPLY WITH 16
 
 std::string rgb_to_esc(std::string red, std::string green, std::string blue, bool is_fore)
